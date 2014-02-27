@@ -29,7 +29,7 @@ options(width = 60)
 ## ## activate dev_mode
 ## dev_mode(on=T)
 ## ## install TR8
-## install_github("GioBo/TR8")
+## install_github("GioBo/TR8",ref="master")
 ## ## you can now work with TR8 functions
 ## 
 ## ## if you want to go back and use the CRAN version

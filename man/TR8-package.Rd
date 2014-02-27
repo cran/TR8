@@ -25,7 +25,7 @@ traits data for plant species from the following sources:
 }
 \details{
 \tabular{ll}{ Package: \tab TR8\cr Type: \tab Package\cr
-Version: \tab 0.9.11\cr Date: \tab 2014-02-27\cr License: \tab
+Version: \tab 0.9.12\cr Date: \tab 2014-02-27\cr License: \tab
 GPL>=2\cr Depends: \tab XML, RCurl, plyr, taxize\cr }
 
 The easiest way of using the package is through the
@@ -39,9 +39,8 @@ The TR8 name, inspired by "car plates" jokes, was chosen since
 \examples{
 
 ## download some trait data for Abies alba 
-\donttest{
-My_traits<-tr8(species_list=c("Abies alba"),gui_config=T)
-}
+My_traits<-tr8(species_list=c("Abies alba"),download_list=c("life_form_P"))
+
 }
 
 \references{

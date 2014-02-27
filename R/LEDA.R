@@ -3,7 +3,7 @@ leda_extract_from_local_df<-function(local_df,species_list,column_variables){
     TEMP<-as.data.frame(local_df[,column_variables])
     names(TEMP)<-column_variables
     row.names(TEMP)<-row.names(local_df)
-    spec<-merge(spec,TEMP,by.x="species_list",by.y=0,all.x=T)
+    spec<-merge(spec,TEMP,by.x="species_list",by.y=0,all.x=TRUE)
     DF<-spec[,column_variables,drop=FALSE]
     row.names(DF)<-spec$species_list
     return(DF)
@@ -119,7 +119,7 @@ leda<-function(species_list,TRAITS,rearranged){
                 for(trait in 1:nrow(leda_subset)){
                     extract<-leda_subset[trait,]
                     leda_temp<-leda_general(url=extract$V1 , skip_row=as.numeric(extract$V2), column=extract$V3, out_name=extract$V4,species=species_list)
-                    spec<-merge(spec,leda_temp,by.x=0,by.y=0,all.x=T)
+                    spec<-merge(spec,leda_temp,by.x=0,by.y=0,all.x=TRUE)
                     row.names(spec)<-spec$Row.names
                     names_of_column<-names(spec)[!(names(spec)%in%c("Row.names","species_list"))]
                     spec<-as.data.frame(spec[,!(names(spec)%in%c("Row.names","species_list"))],row.names = species_list)
@@ -136,7 +136,7 @@ leda<-function(species_list,TRAITS,rearranged){
     ##res@results<-obj@results
     ##obj<-new("Leda",results=spec)
     ##obj@not_valid<-species_list[!species_list%in%LEDA_df$SBS.name]
-    stringa<-"Kleyer, M., Bekker, R.M., Knevel, I.C., Bakker, J.P, Thompson, K., Sonnenschein, M., Poschlod, P., \nVan Groenendael, J.M., Klimes, L., Klimesov\303\241, J., Klotz, S., Rusch, G.M., Hermy, M., Adriaens, D.,\nBoedeltje, G., Bossuyt, B., Dannemann, A., Endels, P., G\303\266tzenberger, L., Hodgson, J.G., Jackel, A-K.,\nK\303\274hn, I., Kunzmann, D., Ozinga, W.A., R\303\266mermann, C., Stadler, M., Schlegelmilch, J., Steendam, H.J.,\nTackenberg, O., Wilmann, B., Cornelissen, J.H.C., Eriksson, O., Garnier, E., Peco, B. (2008):\nThe LEDA Traitbase: A database of life-history traits of Northwest European flora.\nJournal of Ecology 96: 1266-1274.\n"
+    stringa<-"Kleyer, M., Bekker, R.M., Knevel, I.C., Bakker, J.P, Thompson, K., Sonnenschein, M., Poschlod, P., \nVan Groenendael, J.M., Klimes, L., Klimesov\303\241, J., Klotz, S., Rusch, G.M., Hermy, M., Adriaens, D.,\nBoedeltje, G., Bossuyt, B., Dannemann, A., Endels, P., G\303\266tzenberger, L., Hodgson, J.G., Jackel, A-K.,\nK\303\274hn, I., Kunzmann, D., Ozinga, W.A., R\303\266mermann, C., Stadler, M., Schlegelmilch, J., Steendam, H.J.,\nTackenberg, O., Wilmann, B., Cornelissen, J.H.C., Eriksson, O., Garnier, E., Peco, B., 2008.\nThe LEDA Traitbase: A database of life-history traits of Northwest European flora.\nJournal of Ecology 96: 1266-1274.\n"
     Encoding(stringa)<-"unicode"
     res@bibliography<-stringa
     remove(list=c("column_list","leda_lookup"), envir = env)    
