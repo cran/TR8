@@ -1,6 +1,3 @@
-
-
-
 ##
 ## Class Tr8 is used as a "containter" for all other functions and classes
 ## Class Tr8
@@ -13,7 +10,7 @@
 ## @slot results dataframe containing scraped traits
 ## @slot not_valid species whose name were not present in the Ecoflora database
 ## @slot double_names species for which more than one name was found
-setClass("Tr8",representation =list(species_list="vector",results="data.frame",not_valid="vector",double_names="vector",bibliography="list"))
+setClass("Tr8",representation =list(species_list="vector",results="data.frame",not_valid="vector",double_names="vector",bibliography="list",reference="data.frame"))
 
 ## Method issues
 ##
@@ -65,16 +62,11 @@ setGeneric(name="lookup",def=function(.Object){standardGeneric("lookup")})
 ## @aliases lookup, Tr8-Class
 ## @param .Object an object of class Tr8
 setMethod(f="lookup",
-          
-
-
           signature="Tr8",
           definition = function(.Object){
-              ## data(column_list)
-              env<-new.env(parent = parent.frame())
-              data(column_list,envir = env)
-              column_list<-get("column_list",envir=env)
-
+              REF<-.Object@reference
+              RES<-.Object@results
+              DF<-REF[REF$short_code%in%names(RES),]
 
               cat("\n")
               cat("\n")
@@ -84,16 +76,20 @@ setMethod(f="lookup",
               cat("\n")
               cat(sprintf("%-30s\t%-40s\t%-40s\n"," code","description","reference database\n"))
               cat(sprintf("%-30s\t%-40s\t%-40s\n"," ----","-----------","------------------\n"))
-              for(i in names(column_list)){
-                  cat(sprintf("%-30s\t%-40s\t%-30s\n",column_list[i][[1]][1],column_list[i][[1]][2],column_list[i][[1]][3]))
-              }
+              for(i in 1:nrow(DF)){
+                  cat(sprintf("%-30s\t%-40s\t%-30s\n",DF[i,2],DF[i,3],DF[i,4]))
+          }
               cat("\n")
               cat(sprintf("%-30s\t%-40s\t%-40s\n"," ****","***********","******************\n"))
-
-              remove(list=c("column_list"), envir = env)    
-
+              ##tp<-.Object@reference
+              ##tp<-tp[,c("short_code","description","db")]
+              tp<-DF[,c("short_code","description","db")]
+              names(tp)<-revalue(names(tp),c("short_code"="code","db"="reference database"))
+              return(invisible(tp))
           }
 )
+
+
 
 ## @rdname Tr8-Class
 ## @aliases show, Tr8-Class
@@ -129,6 +125,10 @@ setGeneric(name="bib",def=function(.Object){standardGeneric("bib")})
 setMethod(f="bib",
            signature="Tr8",
            definition = function(.Object){
+                   env<-new.env(parent = parent.frame())
+                   data(column_list,envir = env)
+                   column_list<-get("column_list",envir=env)
+
                    cat("\n")
                    cat("Please use the following references for the data you retrieved with tr8()\n")
                    cat("\n")
@@ -179,10 +179,11 @@ setMethod(f="bib",
 #' 
 #' @param species_list a vector containing names of the plant species for which
 #' traits data want to be extracted.
+#' @param download_list a 
 #' @param gui_config if set to TRUE a GUI for selecting traits of interest is shown (default is TRUE)
 #' @return data.frame containing various traits data for the species of interest
 #' @author Gionata Bocci <boccigionata@@gmail.com>
-#' @seealso \code{\link{ecoflora}}, \code{\link{leda}}, \code{\link{biolflor}},\code{\link{pignatti_f}}
+#' @seealso \code{\link{available_traits}}, \code{\link{ecoflora}}, \code{\link{leda}}, \code{\link{biolflor}},\code{\link{pignatti_f}}
 #' @references Please always use the following citations any time you use trait
 #' data retrieved with \code{tr8}
 #' 
@@ -220,100 +221,136 @@ setMethod(f="bib",
 #' Braun-Blanquetia 39, Camerino, pp.  97.
 #'
 #' #' @examples \dontrun{
-#' #My_traits<-tr8(species_list=c("Abies alba"))
+#' #My_traits<-tr8(species_list=c("Abies alba"),download_traits=c("le_area","h_max","h_min"))
 #' }
 #' @export tr8
-tr8<-function(species_list,gui_config=TRUE){
+tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
 
     ## get column_list dataset
     env<-new.env(parent = parent.frame())
     data(column_list,envir = env)
     column_list<-get("column_list",envir=env)
-        
+    ## load lookup table
+    ## convert it to a data frame
+    temp_dframe<-ldply(column_list)
+    names(temp_dframe)<-c("long_code","short_code","description","db")
 
+    op<-options()
+    options("guiToolkit"="tcltk")
+    ## rest is used for Sys.sleep in all the retrieving functions
+    rest=0.01
+    
+    appname <- "TR8"
+    appauthor <- "GioBo"
+    directory<-user_data_dir(appname, appauthor)
+    
 
     
     if(missing(species_list)||!is.character(species_list)){
         message("\ntr8() accepts only a list of plant species names \nplease read help(tr8)\n")
     }else{
-
+        traits_list<-list()
         ## if the user wants to manually sets the parameters to download
         if(gui_config)
             {
-                gmessage(title="TR8 reminder!","Please always use the appropriate citations for the downloaded data.\n
-\n Run the bib() function on the downloaded data to get the correct bibliographic citations to be used.\n")
-                        
+                ##gmessage(title="TR8 reminder!","Please always use the appropriate citations for the downloaded data.\n
+                ##\n Run the bib() function on the downloaded data to get the correct bibliographic citations to be used.\n")
+                ## run the gui
                 traits_list<-tr8_config()
             }else{
-
-                traits_list<-list("Biolflor"=NULL,"LEDA"=NULL,"ECOFLORA"=NULL,"PIGNATTI"=c("L","T","C","U","R","N","S"),"AMF"=NULL)
-            }
-        if(!exists("traits_list")){
-            gmessage(title="TR8 reminder!","Please always use the appropriate citations for the downloaded data.\n
-\n Run the bib() function on the downloaded data to get the correct bibliographic citations to be used.\n")
-
-            traits_list<-list("Biolflor"=as.character(),"LEDA"=as.character(),"ECOFLORA"=as.character(),"PIGNATTI"=as.character(),"AMF"=as.character())
-        }
-        ## load lookup table
-        ## data(column_list)
-        ## convert it to a data frame
-        temp_dframe<-ldply(column_list)
-        names(temp_dframe)<-c("long_code","short_code","description","db")
-
+                for(db in c("BiolFlor","LEDA","Ecoflora","Pignatti","Akhmetzhanova")){
+                    #db<-temp_dframe$db[temp_dframe$short_code==i]
+                    data_db<-temp_dframe[temp_dframe$db==db,]
+                    if(sum(data_db$short_code%in%download_list)>0){
+                        code<-data_db$long_code[data_db$short_code%in%download_list]
+                    }else{code<-NULL}
+                    traits_list[db]<-list(code)
+                }
+                }
         
         ## retrieve traits from ecolora function
-        eco_traits<-ecoflora(species_list,TRAITS=traits_list$ECOFLORA)
-        ## retrieve data from local LEDA datasets
-        if(!exists("rearranged")){
-            rearranged<-NULL}
+        eco_traits<-ecoflora(species_list,TRAITS=traits_list$Ecoflora,rest=rest)
+
+        ## check if an already downloaded version of the LEDA database
+        ## exists and, if so, use it otherwise download a copy, but only
+        ## if at least one LEDA trait is needed
+        local_leda<-paste(directory,"leda_database.Rda",sep="/")
+        if(file.exists(local_leda)){
+            load(local_leda)}else{
+                if(length(traits_list$LEDA)>0){
+                    local_storage(db="LEDA",directory)
+                    load(local_leda)
+            }else{rearranged<-NULL}
+            }
         leda_traits<-leda(species_list,TRAITS=traits_list$LEDA,rearranged=rearranged)
 
         ## retrieve data from BiolFlor
-        biolflor_traits<-biolflor(species_list,traits_list$Biolflor)
+        biolflor_traits<-biolflor(species_list,TRAITS=traits_list$BiolFlor,rest=rest)
         
         ## retrieve data from Pignatti
-        pignatti_traits<-pignatti_f(species_list,TRAITS=traits_list$PIGNATTI)
+        pignatti_traits<-pignatti_f(species_list,TRAITS=traits_list$Pignatti)
 
         ## retrieve flowering periods for Italy
-        it_flowering<-get_italian_flowering(species_list,TRAITS=traits_list$PIGNATTI)
+        it_flowering<-get_italian_flowering(species_list,TRAITS=traits_list$Pignatti,rest=rest)
         
         ## add AMF
-        amf_traits<-retrieve_amf(species_list,TRAITS=traits_list$AMF)
+        ## if AMF is not already downloaded, local_storage is run (but only
+        ## if this trait is requred
+        local_amf<-paste(directory,"myco.Rda",sep="/")
+        if(file.exists(local_amf)){
+            load(local_amf)}else{
+
+                if(length(traits_list$Akhmetzhanova)>0){
+                    local_storage(db="AMF",directory)
+                    load(local_amf)
+                }else{myco<-NULL}
+            }
+
+
+        amf_traits<-retrieve_amf(species_list,TRAITS=traits_list$Akhmetzhanova,rest=rest,myco=myco)
         
         ## merge the results
         tr8_traits<-data.frame(species_list,row.names=species_list)
         bibliography=list()
-        for(i in c(eco_traits,leda_traits,biolflor_traits,pignatti_traits,it_flowering,amf_traits)){
+        
+        for(i in c(eco_traits,biolflor_traits,leda_traits,pignatti_traits,it_flowering,amf_traits)){
             ## merge the dataframes only if they contain data
             if(!is.null(i@results))
                 {
+                    ## clean dataframe column names
+                    i@results<-column_conversion(i@results)
                     ## update the bibliography (Adding the required sources
-                    ## of information
+                    
                     bibliography[[i@bibliography]]=names(i@results)
                     tr8_traits=merge(tr8_traits,i@results,by.x=0,by.y=0,all=TRUE)
                     row.names(tr8_traits)<-tr8_traits$Row.names
-                    tr8_traits<-tr8_traits[,-1]
+                    tr8_traits<-tr8_traits[,-1,drop=FALSE]
                 }
         }
 
         ## remove column species_list
         row_names<-row.names(tr8_traits)
-        names_columns<-names(tr8_traits)[!(names(tr8_traits)%in%c("Row.names","species_list"))]
-        tr8_traits<-as.data.frame(tr8_traits[,names_columns],row.names = row_names)
-        names(tr8_traits)<-names_columns
-
+        ## names_columns<-names(tr8_traits)[!(names(tr8_traits)%in%c("Row.names","species_list"))]
+        ## tr8_traits<-as.data.frame(tr8_traits[,names_columns],row.names = row_names)
+        ## names(tr8_traits)<-names_columns
+        tr8_traits<-tr8_traits[,!(names(tr8_traits)%in%c("Row.names","species_list")),drop=FALSE]
+        
         obj<-new("Tr8")
-                                        #    obj@double_names<-unique(c(eco_traits@double_names,leda_traits@double_names))
-                                        #    obj@not_valid<-intersect(intersect(eco_traits@not_valid,leda_traits@not_valid),pignatti_traits@not_valid)
-        tr8_traits<-biolflor_clean(tr8_traits)
+        ##    obj@double_names<-unique(c(eco_traits@double_names,leda_traits@double_names))
+        ##    obj@not_valid<-intersect(intersect(eco_traits@not_valid,leda_traits@not_valid),pignatti_traits@not_valid)
+
+        ## biolflor_clean is not needed any more
+        ## tr8_traits<-biolflor_clean(tr8_traits)
         tr8_traits<-column_conversion(tr8_traits)
+        obj@reference<-temp_dframe
         obj@results<-tr8_traits
         obj@bibliography<-bibliography
         
                                         #    issues(obj)
         ##return(obj)
                                         #    return(tr8_traits)
-        
+
+        options(op)
         remove(list=c("column_list"), envir = env)    
         return(obj)
     }
