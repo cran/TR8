@@ -19,13 +19,18 @@ traits data for plant species from the following sources:
 
   \item{ Mycorrhizal intensity database}
 
+  \item{MycoFlor}
+  
   \item{\url{http://luirig.altervista.org/}}
+
+  \item{\url{http://perso.wanadoo.fr/philippe.julve/catminat.htm}}
+
 }
   
 }
 \details{
 \tabular{ll}{ Package: \tab TR8\cr Type: \tab Package\cr
-Version: \tab 0.9.12\cr Date: \tab 2014-02-27\cr License: \tab
+Version: \tab 0.9.13\cr Date: \tab 2015-03-10\cr License: \tab
 GPL>=2\cr Depends: \tab XML, RCurl, plyr, taxize\cr }
 
 The easiest way of using the package is through the
@@ -81,6 +86,12 @@ J. H. C. (2012): A rediscovered treasure: mycorrhizal intensity database for
 3000 vascular plants species across the former Soviet
 Union. Ecology 93:689. \url{http://esapubs.org/Archive/ecol/E093/059/default.htm}
 
+\bold{Hempel et al, 2013}
+Hempel, S., Götzenberger, L., Kühn. I., Michalski, S.G.,
+Rillig, M.C., Zobel, M., and Moora, M., 2013. Mycorrhizas in the Central European flora:
+relationships with plant life history traits and ecology. Ecology 94: 1389-1399.
+
+
 \bold{Pignatti et al., 2005}
 
 Pignatti, S., Menegoni, P., Pietrosanti, S. (2005).
@@ -88,6 +99,12 @@ Biondicazione attraverso le piante vascolari. Valori di
 indicazione secondo Ellenberg (Zeigerwerte) per le specie
 della Flora d'Italia. Braun-Blanquetia 39, Camerino, pp.
 97.
+
+\bold{Catminat}
+
+Julve, P., 1998 ff. - Baseflor. Index botanique, écologique et
+chorologique de la flore de France. Version : 26 November 2014.
+http://perso.wanadoo.fr/philippe.julve/catminat.htm
 
 } 
 \seealso{

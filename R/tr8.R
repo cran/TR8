@@ -10,7 +10,7 @@
 ## @slot results dataframe containing scraped traits
 ## @slot not_valid species whose name were not present in the Ecoflora database
 ## @slot double_names species for which more than one name was found
-setClass("Tr8",representation =list(species_list="vector",results="data.frame",not_valid="vector",double_names="vector",bibliography="list",reference="data.frame"))
+setClass("Tr8",representation =list(species_list="vector",results="data.frame",not_valid="vector",double_names="vector",bibliography="list",reference="data.frame",issues="ANY"))
 
 ## Method issues
 ##
@@ -24,6 +24,7 @@ setGeneric(name="issues",def=function(.Object){standardGeneric("issues")})
 setMethod(f="issues",
           signature = "Tr8",
           definition = function(.Object){
+              check=FALSE
               ## warning for double names
               if(length(.Object@double_names)>0){
                   cat("\n")
@@ -33,7 +34,8 @@ setMethod(f="issues",
                       cat(paste("\tFor species",sp," multiple matched names were found\n"))
                   }
                   cat("\n")
-                  }
+                  check=TRUE
+              }
               ## warning for missing species
               if(length(.Object@not_valid)>0){
                   cat("\n")
@@ -43,12 +45,25 @@ setMethod(f="issues",
                       cat(paste("\tFor species",sp," no matched names were found\n"))
                   }
                   cat("\n")
+                  check=TRUE
               }
-              cat("\tPlease check that these results are consistent with your orginal dataset!\n")
-##              return(.Object)
+              ## advice about potential issues given by Ecoflora
+              if(!is.null(.Object@issues)){
+                  cat(.Object@issues)
+                  check=TRUE
+              }
+              if(check){
+                  cat("\tPlease check that these results are consistent with your orginal dataset!\n")
+                  ##              return(.Object)
+              }else{
+
+                  cat("No particular problems were faced in the data retrieval process.\n")
+
+              }
+              
           }
           
-    )
+          )
            
 
 ## Method lookup
@@ -226,6 +241,10 @@ setMethod(f="bib",
 #' @export tr8
 tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
 
+    ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+    ##     stop("You need a working internet connection to use tr8()")
+    ## }
+    
     ## get column_list dataset
     env<-new.env(parent = parent.frame())
     data(column_list,envir = env)
@@ -239,11 +258,14 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
     options("guiToolkit"="tcltk")
     ## rest is used for Sys.sleep in all the retrieving functions
     rest=0.01
-    
-    appname <- "TR8"
-    appauthor <- "GioBo"
-    directory<-user_data_dir(appname, appauthor)
-    
+
+    ## dir.create does not seem to work under windows, thus
+    ## TR8 will not try to create its own subdirectory any more
+    ## but will simply use the standard user_data_dir
+    ## appname <- "TR8"
+    ## appauthor <- "GioBo"
+    ## directory<-user_data_dir(appname, appauthor)
+    directory<-user_data_dir()
 
     
     if(missing(species_list)||!is.character(species_list)){
@@ -258,7 +280,7 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
                 ## run the gui
                 traits_list<-tr8_config()
             }else{
-                for(db in c("BiolFlor","LEDA","Ecoflora","Pignatti","AMF")){
+                for(db in c("BiolFlor","LEDA","Ecoflora","Pignatti","AMF","Catminat")){
                     #db<-temp_dframe$db[temp_dframe$short_code==i]
                     data_db<-temp_dframe[temp_dframe$db==db,]
                     if(sum(data_db$short_code%in%download_list)>0){
@@ -274,10 +296,15 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         ## check if an already downloaded version of the LEDA database
         ## exists and, if so, use it otherwise download a copy, but only
         ## if at least one LEDA trait is needed
-        local_leda<-paste(directory,"leda_database.Rda",sep="/")
+        local_leda<-file.path(directory,"leda_database.Rda")
         if(file.exists(local_leda)){
             load(local_leda)}else{
                 if(length(traits_list$LEDA)>0){
+
+                    ## unfortunately nls() does not work on Windows, thus I think it's better to remove that
+                    ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                    ##     stop("You neither have a working internet connection nor locally stored LEDA files.\n  Please re-run tr8() function when your internet connection is working.")
+                    ## }
                     local_storage(db="LEDA",directory)
                     load(local_leda)
             }else{rearranged<-NULL}
@@ -300,12 +327,16 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         ##is the user interested in downloadin Akhmetzhanova?
         if("Myco_infection"%in%traits_list$AMF){
             ## then check if the dataset has already been downloaded
-            local_amf<-paste(directory,"myco.Rda",sep="/")
+            local_amf<-file.path(directory,"myco.Rda")
             if(file.exists(local_amf)){
                 load(local_amf)}else{
-                    ## otherwise download it now
-                    local_storage(db="Akhmetzhanova",directory)
-                    load(local_amf)
+                   ##  ## otherwise download it now
+                   ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                   ##      stop("You neither have a working internet connection nor locally stored files from Akhmetzhanova et al.\n  Please re-run tr8() function when your internet connection is working.")
+                   ##  }
+
+                   local_storage(db="Akhmetzhanova",directory)
+                   load(local_amf)
                 }
         }else{myco<-NULL
               TRAIT_AK<-NULL
@@ -318,12 +349,15 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         TRAIT_MYC="MycoFlor"
         ##is the user interested in downloadin MycoFlor?
         if("MycoFlor"%in%traits_list$AMF){
-
             ## then check if the dataset has already been downloaded
-            local_amf<-paste(directory,"MycoFlor.Rda",sep="/")
+            local_amf<-file.path(directory,"MycoFlor.Rda")
             if(file.exists(local_amf)){
                 load(local_amf)}else{
-                    ## otherwise download it now
+                    ## ## otherwise download it now
+                    ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                    ##     stop("You neither have a working internet connection nor locally stored files from MycoFlor.\n  Please re-run tr8() function when your internet connection is working.")
+                    ## }
+
                     local_storage(db="MycoFlor",directory)
                     load(local_amf)
                 }
@@ -335,13 +369,31 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         amf_MycoFlor<-retrieve_MycoFlor(species_list,TRAITS=TRAIT_MYC,rest=rest,data_myco=MycoFlor)
 
 
+
+        
+        ## check if an already downloaded version of the Catminat database
+        ## exists and, if so, use it otherwise download a copy, but only
+        ## if at least one Catminat trait is needed
+        local_Catminat<-file.path(directory,"catminat.Rda")
+        if(file.exists(local_Catminat)){
+            load(local_Catminat)}else{
+                if(length(traits_list$Catminat)>0){
+                    local_storage(db="Catminat",directory)
+                    load(local_Catminat)
+            }else{catminat_df<-NULL}
+            }
+        ##        leda_traits<-leda(species_list,TRAITS=traits_list$LEDA,rearranged=rearranged)
+        catminat_traits<-catminat(species_list,TRAITS=traits_list$Catminat,catminat_df)
+
+
+        
         
         
         ## merge the results
         tr8_traits<-data.frame(species_list,row.names=species_list)
         bibliography=list()
-        
-        for(i in c(eco_traits,biolflor_traits,leda_traits,pignatti_traits,it_flowering,amf_traits,amf_MycoFlor)){
+        potential_issues<-c()
+        for(i in c(eco_traits,biolflor_traits,leda_traits,pignatti_traits,it_flowering,amf_traits,amf_MycoFlor,catminat_traits)){
             ## merge the dataframes only if they contain data
             if(!is.null(i@results))
                 {
@@ -353,6 +405,7 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
                     tr8_traits=merge(tr8_traits,i@results,by.x=0,by.y=0,all=TRUE)
                     row.names(tr8_traits)<-tr8_traits$Row.names
                     tr8_traits<-tr8_traits[,-1,drop=FALSE]
+                    potential_issues<-c(potential_issues,i@issues)
                 }
         }
 
@@ -373,6 +426,7 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         obj@reference<-temp_dframe
         obj@results<-tr8_traits
         obj@bibliography<-bibliography
+        obj@issues<-potential_issues
         
                                         #    issues(obj)
         ##return(obj)

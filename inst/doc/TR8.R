@@ -30,6 +30,8 @@ options(width = 60)
 ## dev_mode(on=T)
 ## ## install TR8
 ## install_github("GioBo/TR8",ref="master")
+## ## load it
+## library(TR8)
 ## ## you can now work with TR8 functions
 ## 
 ## ## if you want to go back and use the CRAN version
@@ -96,7 +98,16 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 13: dataset (eval = FALSE)
+### code chunk number 13: issues (eval = FALSE)
+###################################################
+## my_species<-c("Salix alba","Populus nigra")
+## my_traits<-c("h_max","le_area","li_form")
+## my_Data<-tr8(species_list = my_species, download_list = my_traits)
+## issues(my_Data)
+
+
+###################################################
+### code chunk number 14: dataset (eval = FALSE)
 ###################################################
 ## ## suppose veg_data is our dataframe with
 ## ## plant species as columns and sites as rows
@@ -111,20 +122,20 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 14: import (eval = FALSE)
-###################################################
-## My_data<-read.csv("my_veg_data.csv",
-##                   header=T,row.names=1,check.names=F)
-
-
-###################################################
 ### code chunk number 15: bib (eval = FALSE)
 ###################################################
 ## bib(my_traits)
 
 
 ###################################################
-### code chunk number 16: one (eval = FALSE)
+### code chunk number 16: import (eval = FALSE)
+###################################################
+## My_data<-read.csv("my_veg_data.csv",
+##                   header=T,row.names=1,check.names=F)
+
+
+###################################################
+### code chunk number 17: one (eval = FALSE)
 ###################################################
 ## species_names<-names(veg_data)
 ## checked_names<-tnrs(species_names,source="iPlant_TNRS")
@@ -132,26 +143,33 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 17: tr8_ex1 (eval = FALSE)
+### code chunk number 18: tr8_ex1 (eval = FALSE)
 ###################################################
 ## my_traits<-tr8(species_names,gui_config = TRUE)
 ## print(my_traits)
 
 
 ###################################################
-### code chunk number 18: extract (eval = FALSE)
+### code chunk number 19: issue_workflow (eval = FALSE)
+###################################################
+## my_traits<-tr8(species_names,gui_config = TRUE)
+## issues(my_traits)
+
+
+###################################################
+### code chunk number 20: extract (eval = FALSE)
 ###################################################
 ## traits_df<-extract_traits(my_traits)
 
 
 ###################################################
-### code chunk number 19: store_to_csv (eval = FALSE)
+### code chunk number 21: store_to_csv (eval = FALSE)
 ###################################################
 ## save(traits_df,file="traits_df.csv")
 
 
 ###################################################
-### code chunk number 20: vignette (eval = FALSE)
+### code chunk number 22: vignette (eval = FALSE)
 ###################################################
 ## vignette("TR8_workflow")
 

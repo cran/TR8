@@ -16,9 +16,9 @@
 ##' default is NULL;
 ##' @return nothing
 ##' @author Gionata Bocci <boccigionata@@gmail.com>>
-local_storage<-function(db=c("LEDA","Akhmetzhanova","MycoFlor"),directory){
+local_storage<-function(db=c("LEDA","Akhmetzhanova","MycoFlor","Catminat"),directory){
 
-    dir.create(directory,showWarnings=FALSE)
+    ##dir.create(directory,showWarnings=FALSE)
 
     
     ## download AMF data
@@ -32,7 +32,7 @@ local_storage<-function(db=c("LEDA","Akhmetzhanova","MycoFlor"),directory){
                             message("URL does not seem to exist:")
                             return(NA)
                         })
-        save(file=paste(directory,"myco.Rda",sep="/"),myco,precheck = F) 
+        save(file=file.path(directory,"myco.Rda"),myco,precheck = F) 
     }
 
     if("MycoFlor"%in%db){
@@ -45,7 +45,7 @@ local_storage<-function(db=c("LEDA","Akhmetzhanova","MycoFlor"),directory){
                                 message("URL does not seem to exist:")
                                 return(NA)
                             } )
-        save(file=paste(directory,"MycoFlor.Rda",sep="/"),MycoFlor,precheck = F) 
+        save(file=file.path(directory,"MycoFlor.Rda"),MycoFlor,precheck = F)
     }
 
      
@@ -53,4 +53,11 @@ local_storage<-function(db=c("LEDA","Akhmetzhanova","MycoFlor"),directory){
         ## download LEDA data
         leda_download_to_local_directory(directory)
     }
+
+    ## download AMF data
+    if("Catminat"%in%db){
+        catminat_download_to_local_directory(directory)
+    }
+    
+
 }
