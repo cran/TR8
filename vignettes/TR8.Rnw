@@ -47,9 +47,9 @@ possibility of easily retrieving traits data for plant species from the followin
 \item[Ellenberg values for Italian Flora] \cite{pignatti}
 \item[Flowering period for Italian Flora] \cite{pignatti} (data retrieved from \url{http://luirig.altervista.org/})
 \item[Mycorrhizal intensity database] \cite{amf}
-  \item[MycoFlor database]\cite{Hempel2013}
-  \item[Catminat database]\cite{catminat} 
-    
+\item[MycoFlor database]\cite{Hempel2013}
+\item[Catminat database]\cite{catminat} 
+\item[BROT]\cite{BROT_1}\cite{BROT_2}  
 \end{description}
 
   Please note that not all the traits available on the listed
@@ -90,14 +90,14 @@ Please note that:
 \end{description}
 
 
-\subsection{A very important note for Windows users}
+%% \subsection{A very important note for Windows users}
 
 
-   If you want to be able to use data from the \texttt{Catminat}
-   database you need to have \texttt{Perl} installed on your machine.
-   If you do not have it, please go at
-   \url{https://www.perl.org/get.html} and install either
-   \texttt{Strawberry Perl} (the one I suggest) or \texttt{ActiveState Perl}.
+%%    If you want to be able to use data from the \texttt{Catminat}
+%%    database you need to have \texttt{Perl} installed on your machine.
+%%    If you do not have it, please go at
+%%    \url{https://www.perl.org/get.html} and install either
+%%    \texttt{Strawberry Perl} (the one I suggest) or \texttt{ActiveState Perl}.
 
   
 \subsection{Using the development version}
@@ -280,6 +280,16 @@ the following strategy was adopted:
 
 \textbf{Nota bene}: in some cases some traits are stored as \textit{string} in the original databases, even though they should be treated as numbers (e.g. the number \textit{five} is stored as a string - i.e. "5", not as the numeric value \texttt{5}): in those case \texttt{tr8} function is not able to interpret that entry as a numeric, thus, applying the above mentioned criteria to merge multiple traits, strange outputs may result from \texttt{tr8}, e.g. if a species has two entries for the trait \texttt{height} - day 3 and 3.5 meters - the merged value will not be the numeric mean (3.25) but the union of the two strings ("3-3.5").
 
+
+\textbf{Note for BROT database}: BROT database contains several entries for the same trait for some species: this may be due to the fact that several sources of data were used and/or that data for different regions were reported. In the current version of \texttt{TR8} these multiple data are treated as follows:
+
+\begin{itemize}
+\item if there are both numeric (quantitative) and string (qualitative) entries, numeric ones are given the precedence and the mean of all numeric entries is used as the returned trait value
+\item if several qualitative entries are present (but no quantitative ones), only the most abundant level is reported (in case ties are present, eg. two levels are reported the same number of times, both values are reported, separated by a comma). 
+\end{itemize}
+
+
+
 \section{Citing the package}
    
    Please use the following citation when using \texttt{TR8} package:\\
@@ -318,13 +328,19 @@ bib(my_traits)
 
 \section{Some notes on using \texttt{tr8}}
 
+\subsubsection*{A NOTE OF CAUTION}
 
-  \textbf{A NOTE OF CAUTION}: searching the web is a time (and
+
+  Searching the web is a time (and
   Internet band) consuming activity, thus the higher the number of
   your plant species and the traits to be retrieved, the longer it will take to \texttt{tr8()} to complete its job. Moreover, in order
-  not to overflow the remote databases with \texttt{http} requests, the \texttt{tr8} function will always pause between one search and the following one.\\
+  not to overflow the remote databases with \texttt{http} requests, the \texttt{tr8} function will always pause between one search and the following one.
 
-  \textbf{A (SECOND) NOTE OF CAUTION}: some users adopt the following workflow for analysing their vegetation data:
+  \subsubsection*{A (SECOND) NOTE OF CAUTION}
+
+
+  
+ Some users adopt the following workflow for analysing their vegetation data:
 
   \begin{enumerate}
   \item insert vegetation data into a \textit{spreadsheet file} with species as
@@ -409,6 +425,36 @@ and then open that file with a spreadsheet software (e.g. LibreOffice).
   \end{enumerate}
   
 
+  \subsection{Dealing with synonyms}
+  
+  In some cases the same species may be present in different traitbases
+  under different synonyms. In order to make it easier for the user to deal with
+  this issue, \texttt{tr8} function has a parameter called
+  \texttt{synonyms}: when set to true it forces the \texttt{tr8} to call the
+  \texttt{tnrs} function from the \texttt{taxize} package and retrieve
+  possible synonims for the provided species names: in this case the
+  retrieved trait data will have two additional columns, one called
+  \texttt{synonyms} (for the synonyms found) and another named
+  \textit{original\_names} which contains the original names passed by
+  the user with the \texttt{species\_list}
+  parameter\footnote{\textbf{PLEASE NOTE} that when \texttt{synonyms}
+    is set to TRUE, the resulting dataframe will have numbers as
+    row.names: this is mandatory since in a few cases different
+    species names may share a common synonym and 
+    \texttt{R} does not allow different
+    rows to share the same name.}.
+
+
+
+@ 
+<<synonims, eval=FALSE>>=
+my_species<-c("Salix alba","Inula viscosa")
+my_traits<-c("h_max","le_area","li_form")
+my_Data<-tr8(species_list = my_species, download_list = my_traits, synonyms=TRUE)
+@ %def 
+
+
+  
   
 \section{Further steps}
 

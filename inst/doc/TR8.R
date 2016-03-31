@@ -169,7 +169,15 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 22: vignette (eval = FALSE)
+### code chunk number 22: synonims (eval = FALSE)
+###################################################
+## my_species<-c("Salix alba","Inula viscosa")
+## my_traits<-c("h_max","le_area","li_form")
+## my_Data<-tr8(species_list = my_species, download_list = my_traits, synonyms=TRUE)
+
+
+###################################################
+### code chunk number 23: vignette (eval = FALSE)
 ###################################################
 ## vignette("TR8_workflow")
 

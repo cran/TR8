@@ -1,0 +1,21 @@
+## synonyms
+
+   Now tr8() accepts a new argument, 'synonyms': when it is set to
+   true the function will use 'tnrs' function from the package
+   'taxize' to search for synonyms of the provided species list and
+   search trait data for them as well. 
+
+
+
+## Catminat database
+
+	Thanks to the `readxl` package, now the dataset (which is in
+    `xlsx` format) can be read without external dependencies
+    (i.e. users do not have to worry about installing `perl`)
+
+## BROT, PLANTS and Ecological Flora of California traitbases
+
+
+     Three new databases are added as sources of data: BROT (mainly related to mediterranean
+     species), PLANTS and Ecological Flora of California (from USA).
+

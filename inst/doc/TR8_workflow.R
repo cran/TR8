@@ -4,11 +4,10 @@
 ###################################################
 ### code chunk number 1: dryad (eval = FALSE)
 ###################################################
-## ## the XLConnect package is needed
-## ## install.packages("XLConnect",dependencies = T)
-## library(XLConnect)
+## ## the readxl package is needed
+## ## library(readxl)
 ## ## store the  url of the dryad package
-## url<-"http://datadryad.org/bitstream/handle//
+## url<-"http://datadryad.org/bitstream/handle/
 ##     10255/dryad.65646/MEE-13-11-651R2_data.xlsx?sequence=1"
 ## ## choose the extension for the temp file where 
 ## ## data will be stored
@@ -17,15 +16,23 @@
 ## download.file(url = url, destfile = tmp)
 ## 
 ## ## we first read the "metadata" sheet from the xlsx file
-## metadata<-readWorksheetFromFile(file = tmp, sheet = "metadata", 
-##  header = FALSE, startRow = 15, startCol = 1, endCol = 3)
+## ## (the row containing the species names start from 
+## ## row 13
+## metadata<-read_excel(path=tmp,sheet="metadata",skip=12,col_names=F)
+## ## lets rename the column of this dataset 
+## names(metadata)<-c("Col1","Col2")
+## 
 ## ## then read the vegetation data
-## veg_data <-readWorksheetFromFile(file = tmp, sheet = "data.txt", 
-##        header = TRUE, startRow = 1, startCol = 11, endCol = 123)
-## ## round veg_data numbers to the second digit
+## veg_data <-readWorksheetFromFile(file = tmp, sheet = "data.txt")
+## ## only the columns from 11 to 123 contains the species data
+## veg_data<-veg_data[,11:123]
+##        ## round veg_data numbers to the second digit
 ## veg_data<-round(veg_data,digits = 2)
-## env_data<-readWorksheetFromFile(file = tmp, sheet = "data.txt",
-##          header = TRUE, startRow = 1, startCol = 3, endCol = 4)
+## ## read the dataset with the environmental variables
+## env_data<-read_excel(path = tmp, sheet = "data.txt")
+## ## and select only the column from 1 to 4 which contain
+## ## the data of interest
+## env_data<-env_data[,1:4]
 
 
 ###################################################

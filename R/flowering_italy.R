@@ -1,56 +1,77 @@
 
+
 luirig<-function(species){
+    ## The website provides flowering periods with month expressed
+    ## as roman numbers, thus a lookup table is needed for
+    ## conversion purposes
+
+    ##lookup_month<-data.frame(code=c(1:12,"NA"),roman=c("I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"," "),stringsAsFactors = T)
+    lookup_month<-data.frame(code=c(1:12),roman=c("I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"),stringsAsFactors = T)
     base_url<-"http://luirig.altervista.org/flora/taxa/floraspecie.php?genere="
+    ## a single page contains all the data for all the species belonging to the same genus
+
+    ## This version adopt a different strategy: in luirig web pages there are href in the form "genus+species",
+    ## thus these are used as target for our search: in the html structure, these nodes are precedeed by a <br>
+    ## which contains the flowering dates which are extracted by means of regexp
+    
     genus<-gsub("(^[a-zA-Z]+) .*","\\1",species,useBytes = TRUE)
     url<-paste(base_url,genus,sep = "")
     RES<-list()
-    if(url.exists(url)){
-        tables<-readHTMLTable(url)
-        flowering<-tables[[2]][,c(1,6)]
-        names(flowering)<-c("Scientific_name","IT_beg_flow")
-        
-        tp_names<-as.character(flowering$Scientific_name)
-        
-        deh<-lapply(tp_names,function(x){
-            tp<-unlist(strsplit(x,"\n"))[[1]]
-            return(tp)
-        })
-        deh<-unlist(deh)
-        deh<-gsub("^[ ]*[0-9]+) (.*)","\\1",deh)
-        flowering$Scientific_name<-deh
-        fioritura<-with(flowering,IT_beg_flow[grep(species,Scientific_name)])
-        
-        as.character(flowering$IT_beg_flow)->tp
-        flowering<-cbind(flowering,"IT_end_flow"=tp)
-        
-        flowering$IT_beg_flow<-gsub("^(.*)-.*","\\1",flowering$IT_beg_flow)
-        flowering$IT_end_flow<-gsub("^.*-(.*)","\\1",flowering$IT_end_flow)
-        
-        lookup_month<-data.frame(code=c(1:12,NA),roman=c("I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII",""),stringsAsFactors = T)
-        FLOW<-data.frame(IT_beg_flow=mapvalues(flowering$IT_beg_flow,lookup_month$roman,lookup_month$code,warn_missing = F),IT_end_flow=mapvalues(flowering$IT_end_flow,lookup_month$roman,lookup_month$code,warn_missing = F),row.names = flowering$Scientific_name)
-        
 
-        FOUND<-FLOW[grep(species,row.names(FLOW)),]
-    ## if the species was not found, return a df with NA NA
-        if(nrow(FOUND)>0){
-            RES[[species]]["IT_beg_flow"]=as.numeric(as.character(FOUND[1,"IT_beg_flow"]))
-        RES[[species]]["IT_end_flow"]=as.numeric(as.character(FOUND[1,"IT_end_flow"]))
-    }else{
-        RES[[species]]["IT_beg_flow"]=NA
-        RES[[species]]["IT_end_flow"]=NA
-    }
-    }else{
-        RES[[species]]["IT_beg_flow"]=NA
-        RES[[species]]["IT_end_flow"]=NA
+    if(url.exists(url)){
+
+        ## in the href species names are lowercase and species and genus are linked by a plus sign
+        specie<-tolower(species)
+        specie<-gsub("\\s+","+",specie)
+        
+        temp_pag<-htmlParse(url)
+        ## search for the target node
+        query=paste('//*[@href="index1.php?scientific-name=',specie,'"]',sep="")
+        value=xpathApply(temp_pag,query,xmlValue)
+
+        ## is our species found in the html parsed page?
+        if(length(value)>0){
+            ## extract our node
+            uno<-getNodeSet(temp_pag,query)
+            ## go back of 2 parents node (where the flowering data are found)
+            due<-xmlParent(xmlParent(xmlParent(uno[[1]])))
+            ## extract the text of the node
+            vai<-xmlValue(due,"//*[text()[contains(., 'Fiorit')]]")
+            ## extract flowering dates
+            beg_fl<-gsub(".*Fiorit:([IVX]+)-([IVX]*)Tipo.*","\\1",vai)
+            end_fl<-gsub(".*Fiorit:([IVX]+)-([IVX]*)Tipo.*","\\2",vai)        
+            
+            beg_fl<-mapvalues(beg_fl,lookup_month$roman,lookup_month$cod,warn_missing=FALSE)
+            end_fl<-mapvalues(end_fl,lookup_month$roman,lookup_month$cod,warn_missing=FALSE)
+            
+            if(beg_fl%in%1:12&end_fl%in%1:12){
+                RES[[species]]["IT_beg_flow"]=beg_fl
+                RES[[species]]["IT_end_flow"]=end_fl
+            }else{
+                RES[[species]]["IT_beg_flow"]=NA
+                RES[[species]]["IT_end_flow"]=NA
+            }
+        }else{
+            RES[[species]]["IT_beg_flow"]=NA
+            RES[[species]]["IT_end_flow"]=NA
+        }
+        }else{
+            RES[[species]]["IT_beg_flow"]=NA
+            RES[[species]]["IT_end_flow"]=NA
+            
     }
     return(RES[[species]])
 }
 
 
+    
+
+
+    
 
 ##' ##' get_italian_flowering get the beginning and the end of the flowering
 ##' phase for the italian flora. Values are based on Pignatti and retrieved
-##' from the \url{http://luirig.altervista.org/}
+##' from the \samp{http://luirig.altervista.org/}
 ##'
 ##' 
 ##' 
@@ -60,7 +81,7 @@ luirig<-function(species){
 ##' tr8_gui() created variables)
 ##' @return a dataframe with two columns, the beginning and the end month (expressed as a number from 1 to 12)
 ##' of the flowering phase
-##' @references \url{http://luirig.altervista.org/}
+##' @references \samp{http://luirig.altervista.org/}
 ##' @author Gionata Bocci <boccigionata@@gmail.com>
 get_italian_flowering<-function(species_list,TRAITS,rest){
     res<-new("results")

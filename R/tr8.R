@@ -24,47 +24,47 @@ setGeneric(name="issues",def=function(.Object){standardGeneric("issues")})
 setMethod(f="issues",
           signature = "Tr8",
           definition = function(.Object){
-              check=FALSE
-              ## warning for double names
-              if(length(.Object@double_names)>0){
-                  cat("\n")
-                  cat("\t WARNING\n")
-                  cat("\n")
-                  for(sp in .Object@double_names){
-                      cat(paste("\tFor species",sp," multiple matched names were found\n"))
-                  }
-                  cat("\n")
-                  check=TRUE
-              }
-              ## warning for missing species
-              if(length(.Object@not_valid)>0){
-                  cat("\n")
-                  cat("\t WARNING\n")
-                  cat("\n")
-                  for(sp in .Object@not_valid){
-                      cat(paste("\tFor species",sp," no matched names were found\n"))
-                  }
-                  cat("\n")
-                  check=TRUE
-              }
-              ## advice about potential issues given by Ecoflora
-              if(!is.null(.Object@issues)){
-                  cat(.Object@issues)
-                  check=TRUE
-              }
-              if(check){
-                  cat("\tPlease check that these results are consistent with your orginal dataset!\n")
-                  ##              return(.Object)
-              }else{
+    check=FALSE
+    ## warning for double names
+    if(length(.Object@double_names)>0){
+        cat("\n")
+        cat("\t WARNING\n")
+        cat("\n")
+        for(sp in .Object@double_names){
+            cat(paste("\tFor species",sp," multiple matched names were found\n"))
+        }
+        cat("\n")
+        check=TRUE
+    }
+    ## warning for missing species
+    if(length(.Object@not_valid)>0){
+        cat("\n")
+        cat("\t WARNING\n")
+        cat("\n")
+        for(sp in .Object@not_valid){
+            cat(paste("\tFor species",sp," no matched names were found\n"))
+        }
+        cat("\n")
+        check=TRUE
+    }
+    ## advice about potential issues given by Ecoflora
+    if(!is.null(.Object@issues)){
+        cat(.Object@issues)
+        check=TRUE
+    }
+    if(check){
+        cat("\tPlease check that these results are consistent with your orginal dataset!\n")
+        ##              return(.Object)
+    }else{
 
-                  cat("No particular problems were faced in the data retrieval process.\n")
+        cat("No particular problems were faced in the data retrieval process.\n")
 
-              }
-              
-          }
-          
-          )
-           
+    }
+    
+}
+
+)
+
 
 ## Method lookup
 ##
@@ -79,29 +79,29 @@ setGeneric(name="lookup",def=function(.Object){standardGeneric("lookup")})
 setMethod(f="lookup",
           signature="Tr8",
           definition = function(.Object){
-              REF<-.Object@reference
-              RES<-.Object@results
-              DF<-REF[REF$short_code%in%names(RES),]
+    REF<-.Object@reference
+    RES<-.Object@results
+    DF<-REF[REF$short_code%in%names(RES),]
 
-              cat("\n")
-              cat("\n")
-              cat("*****************************************************************")
-              cat("\n")
-              cat("To interpret the traits data, please refer to the following table\n")
-              cat("\n")
-              cat(sprintf("%-30s\t%-40s\t%-40s\n"," code","description","reference database\n"))
-              cat(sprintf("%-30s\t%-40s\t%-40s\n"," ----","-----------","------------------\n"))
-              for(i in 1:nrow(DF)){
-                  cat(sprintf("%-30s\t%-40s\t%-30s\n",DF[i,2],DF[i,3],DF[i,4]))
-          }
-              cat("\n")
-              cat(sprintf("%-30s\t%-40s\t%-40s\n"," ****","***********","******************\n"))
-              ##tp<-.Object@reference
-              ##tp<-tp[,c("short_code","description","db")]
-              tp<-DF[,c("short_code","description","db")]
-              names(tp)<-revalue(names(tp),c("short_code"="code","db"="reference database"))
-              return(invisible(tp))
-          }
+    cat("\n")
+    cat("\n")
+    cat("*****************************************************************")
+    cat("\n")
+    cat("To interpret the traits data, please refer to the following table\n")
+    cat("\n")
+    cat(sprintf("%-30s\t%-40s\t%-40s\n"," code","description","reference database\n"))
+    cat(sprintf("%-30s\t%-40s\t%-40s\n"," ----","-----------","------------------\n"))
+    for(i in 1:nrow(DF)){
+        cat(sprintf("%-30s\t%-40s\t%-30s\n",DF[i,2],DF[i,3],DF[i,4]))
+    }
+    cat("\n")
+    cat(sprintf("%-30s\t%-40s\t%-40s\n"," ****","***********","******************\n"))
+    ##tp<-.Object@reference
+    ##tp<-tp[,c("short_code","description","db")]
+    tp<-DF[,c("short_code","description","db")]
+    names(tp)<-revalue(names(tp),c("short_code"="code","db"="reference database"))
+    return(invisible(tp))
+}
 )
 
 
@@ -112,9 +112,9 @@ setMethod(f="lookup",
 setMethod(f="show",
           signature="Tr8",
           function(object){
-              print(object@results)
-          }
-          )
+    print(object@results)
+}
+)
 
 
 ## A method to extract results form a Tr8 object
@@ -125,42 +125,42 @@ setGeneric("extract_traits",def=function(object){standardGeneric("extract_traits
 setMethod(f="extract_traits",
           signature="Tr8",
           function(object){
-              return(object@results)
-          }
-          )
+    return(object@results)
+}
+)
 
 
 ## Method bib
-#@name bib
-#@rdname Tr8-Class
-#@exportMethod bib
+                                        #@name bib
+                                        #@rdname Tr8-Class
+                                        #@exportMethod bib
 setGeneric(name="bib",def=function(.Object){standardGeneric("bib")})
 
 
 setMethod(f="bib",
-           signature="Tr8",
-           definition = function(.Object){
-                   env<-new.env(parent = parent.frame())
-                   data(column_list,envir = env)
-                   column_list<-get("column_list",envir=env)
+          signature="Tr8",
+          definition = function(.Object){
+    env<-new.env(parent = parent.frame())
+    data(column_list,envir = env)
+    column_list<-get("column_list",envir=env)
 
-                   cat("\n")
-                   cat("Please use the following references for the data you retrieved with tr8()\n")
-                   cat("\n")
-               for(db in names(.Object@bibliography)){
-                   cat("************************************************\n")
-                   cat("\n\nFor the following traits:\n\n")
-                   for(trait in .Object@bibliography[[db]]){
-                       cat("\t * ",paste(trait),"\n")
-                   }
-                   cat("\nplease use:\n\n")
-                   cat(db,fill=TRUE)
-                   cat("\n")
-               }
-                   cat("************************************************\n")
-           }
+    cat("\n")
+    cat("Please use the following references for the data you retrieved with tr8()\n")
+    cat("\n")
+    for(db in names(.Object@bibliography)){
+        cat("************************************************\n")
+        cat("\n\nFor the following traits:\n\n")
+        for(trait in .Object@bibliography[[db]]){
+            cat("\t * ",paste(trait),"\n")
+        }
+        cat("\nplease use:\n\n")
+        cat(db,fill=TRUE)
+        cat("\n")
+    }
+    cat("************************************************\n")
+}
 
-          )
+)
 
 ## @rdname Tr8-Class
 ## @aliases bib, Tr8-Class
@@ -209,7 +209,7 @@ setMethod(f="bib",
 #' \bold{Ecoflora}
 #' 
 #' Fitter, A . H. and Peat , H. J., 1994, The Ecological Flora Database, J.
-#' Ecol., 82, 415-425.  \url{http://www.ecoflora.co.uk}
+#' Ecol., 82, 415-425.  \samp{http://www.ecoflora.co.uk}
 #' 
 #' \bold{LEDA traitbase}
 #' Kleyer, M., Bekker, R.M., Knevel, I.C., Bakker, J.P, Thompson, K., Sonnenschein, M., Poschlod, P.,
@@ -239,7 +239,7 @@ setMethod(f="bib",
 #' #My_traits<-tr8(species_list=c("Abies alba"),download_traits=c("le_area","h_max","h_min"))
 #' }
 #' @export tr8
-tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
+tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE){
 
     ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
     ##     stop("You need a working internet connection to use tr8()")
@@ -266,6 +266,7 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
     ## appauthor <- "GioBo"
     ## directory<-user_data_dir(appname, appauthor)
     directory<-user_data_dir()
+    
 
     
     if(missing(species_list)||!is.character(species_list)){
@@ -274,23 +275,50 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         traits_list<-list()
         ## if the user wants to manually sets the parameters to download
         if(gui_config)
-            {
-                ##gmessage(title="TR8 reminder!","Please always use the appropriate citations for the downloaded data.\n
-                ##\n Run the bib() function on the downloaded data to get the correct bibliographic citations to be used.\n")
-                ## run the gui
-                traits_list<-tr8_config()
-            }else{
-                for(db in c("BiolFlor","LEDA","Ecoflora","Pignatti","AMF","Catminat")){
-                    #db<-temp_dframe$db[temp_dframe$short_code==i]
-                    data_db<-temp_dframe[temp_dframe$db==db,]
-                    if(sum(data_db$short_code%in%download_list)>0){
-                        code<-data_db$long_code[data_db$short_code%in%download_list]
-                    }else{code<-NULL}
-                    traits_list[db]<-list(code)
-                }
-                }
+        {
+            ##gmessage(title="TR8 reminder!","Please always use the appropriate citations for the downloaded data.\n
+            ##\n Run the bib() function on the downloaded data to get the correct bibliographic citations to be used.\n")
+            ## run the gui
+            traits_list<-tr8_config()
+        }else{
+            for(db in c("BiolFlor","LEDA","Ecoflora","Pignatti","AMF","Catminat","BROT","PLANTS","EFlora_Cal")){
+                                        #db<-temp_dframe$db[temp_dframe$short_code==i]
+                data_db<-temp_dframe[temp_dframe$db==db,]
+                if(sum(data_db$short_code%in%download_list)>0){
+                    code<-data_db$long_code[data_db$short_code%in%download_list]
+                }else{code<-NULL}
+                traits_list[db]<-list(code)
+            }
+        }
+        if(synonyms==TRUE){
+            
+            check_names<-tnrs(species_list)
+            check_names<-check_names[,c("submittedname","acceptedname","matchedname")]
+            
+            reference_names<-lapply(species_list,function(x){
+                
+                sp_names<-check_names[check_names$submittedname==x,]
+                sp_names<-unique(unlist(sp_names))
+                sp_names<-sp_names[grep("^\\w+ \\w+.*$",sp_names)]
+                return(sp_names)
+
+            }
+            )
+            names(reference_names)<-species_list
+            species_list<-unique(as.vector(unlist(reference_names)))
+            
+        }
+        
         
         ## retrieve traits from ecolora function
+        local_ecoflora<-file.path(directory,"ECOFLORA_df.Rda")
+        if(file.exists(local_ecoflora)){
+            load(local_ecoflora)}else{
+            if(length(traits_list$Ecoflora)>0){
+                local_storage(db="Ecoflora",directory)
+                load(local_ecoflora)
+            }
+        }
         eco_traits<-ecoflora(species_list,TRAITS=traits_list$Ecoflora,rest=rest)
 
         ## check if an already downloaded version of the LEDA database
@@ -299,18 +327,23 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         local_leda<-file.path(directory,"leda_database.Rda")
         if(file.exists(local_leda)){
             load(local_leda)}else{
-                if(length(traits_list$LEDA)>0){
+            if(length(traits_list$LEDA)>0){
 
-                    ## unfortunately nls() does not work on Windows, thus I think it's better to remove that
-                    ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
-                    ##     stop("You neither have a working internet connection nor locally stored LEDA files.\n  Please re-run tr8() function when your internet connection is working.")
-                    ## }
-                    local_storage(db="LEDA",directory)
-                    load(local_leda)
+                ## unfortunately nls() does not work on Windows, thus I think it's better to remove that
+                ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                ##     stop("You neither have a working internet connection nor locally stored LEDA files.\n  Please re-run tr8() function when your internet connection is working.")
+                ## }
+                url_leda="http://www.uni-oldenburg.de/en/landeco/research/projects/LEDA/Data%20Files/"
+                if(tryCatch(url.exists(url_leda), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                    stop("\n\n LEDA website is probably down.\n Please re-run tr8() without selecting LEDA as a source of data \n (or re-try later).\n\n")
+                }
+                
+                local_storage(db="LEDA",directory)
+                load(local_leda)
             }else{rearranged<-NULL}
-            }
+        }
         leda_traits<-leda(species_list,TRAITS=traits_list$LEDA,rearranged=rearranged)
-
+        
         ## retrieve data from BiolFlor
         biolflor_traits<-biolflor(species_list,TRAITS=traits_list$BiolFlor,rest=rest)
         
@@ -330,18 +363,18 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
             local_amf<-file.path(directory,"myco.Rda")
             if(file.exists(local_amf)){
                 load(local_amf)}else{
-                   ##  ## otherwise download it now
-                   ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
-                   ##      stop("You neither have a working internet connection nor locally stored files from Akhmetzhanova et al.\n  Please re-run tr8() function when your internet connection is working.")
-                   ##  }
+                ##  ## otherwise download it now
+                ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                ##      stop("You neither have a working internet connection nor locally stored files from Akhmetzhanova et al.\n  Please re-run tr8() function when your internet connection is working.")
+                ##  }
 
-                   local_storage(db="Akhmetzhanova",directory)
-                   load(local_amf)
-                }
+                local_storage(db="Akhmetzhanova",directory)
+                load(local_amf)
+            }
         }else{myco<-NULL
-              TRAIT_AK<-NULL
-          }
-    
+            TRAIT_AK<-NULL
+        }
+        
         amf_traits<-retrieve_amf(species_list,TRAITS=TRAIT_AK,rest=rest,data_myco=myco)
 
         ## check&download mycoflor
@@ -353,14 +386,14 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
             local_amf<-file.path(directory,"MycoFlor.Rda")
             if(file.exists(local_amf)){
                 load(local_amf)}else{
-                    ## ## otherwise download it now
-                    ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
-                    ##     stop("You neither have a working internet connection nor locally stored files from MycoFlor.\n  Please re-run tr8() function when your internet connection is working.")
-                    ## }
+                ## ## otherwise download it now
+                ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
+                ##     stop("You neither have a working internet connection nor locally stored files from MycoFlor.\n  Please re-run tr8() function when your internet connection is working.")
+                ## }
 
-                    local_storage(db="MycoFlor",directory)
-                    load(local_amf)
-                }
+                local_storage(db="MycoFlor",directory)
+                load(local_amf)
+            }
         }else{
             MycoFlor<-NULL
             TRAIT_MYC<-NULL
@@ -377,45 +410,73 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         local_Catminat<-file.path(directory,"catminat.Rda")
         if(file.exists(local_Catminat)){
             load(local_Catminat)}else{
-                if(length(traits_list$Catminat)>0){
-                    local_storage(db="Catminat",directory)
-                    load(local_Catminat)
+            if(length(traits_list$Catminat)>0){
+                local_storage(db="Catminat",directory)
+                load(local_Catminat)
             }else{catminat_df<-NULL}
-            }
+        }
         ##        leda_traits<-leda(species_list,TRAITS=traits_list$LEDA,rearranged=rearranged)
         catminat_traits<-catminat(species_list,TRAITS=traits_list$Catminat,catminat_df)
-
-
         
+        ## check if an already downloaded version of the BROT database
+        ## exists and, if so, use it otherwise download a copy, but only
+        ## if at least one BROT trait is needed
+        local_BROT<-file.path(directory,"BROT.Rda")
+        if(file.exists(local_BROT)){
+            load(local_BROT)}else{
+            if(length(traits_list$BROT)>0){
+                local_storage(db="BROT",directory)
+                load(local_BROT)
+            }else{BROT_df<-NULL}
+        }
+        
+        brot_traits <- brot_data(species_list,TRAITS=traits_list$BROT)
+        
+        ## download traits from Electronic Flora of Californa
+        efloracal_traits<-eflora(species_list,TRAITS=traits_list$EFlora_Cal)
+        
+        ## check if an already downloaded version of the PLANTS database
+        ## exists and, if so, use it otherwise download a copy, but only
+        ## if at least one BROT trait is needed
+        local_PLANTS<-file.path(directory,"PLANTS.Rda")
+        if(file.exists(local_PLANTS)){
+            load(local_PLANTS)}else{
+            if(length(traits_list$PLANTS)>0){
+                local_storage(db="PLANTS",directory)
+                load(local_PLANTS)
+            }else{PLANTS_df<-NULL}
+        }
+        
+        PLANT_traits <- PLANTS(species_list,TRAITS=traits_list$PLANTS)
         
         
         ## merge the results
         tr8_traits<-data.frame(species_list,row.names=species_list)
         bibliography=list()
         potential_issues<-c()
-        for(i in c(eco_traits,biolflor_traits,leda_traits,pignatti_traits,it_flowering,amf_traits,amf_MycoFlor,catminat_traits)){
+        for(i in c(eco_traits,biolflor_traits,leda_traits,pignatti_traits,it_flowering,amf_traits,amf_MycoFlor,catminat_traits,brot_traits,PLANT_traits,efloracal_traits)){
             ## merge the dataframes only if they contain data
             if(!is.null(i@results))
-                {
-                    ## clean dataframe column names
-                    i@results<-column_conversion(i@results)
-                    ## update the bibliography (Adding the required sources
-                    
-                    bibliography[[i@bibliography]]=names(i@results)
-                    tr8_traits=merge(tr8_traits,i@results,by.x=0,by.y=0,all=TRUE)
-                    row.names(tr8_traits)<-tr8_traits$Row.names
-                    tr8_traits<-tr8_traits[,-1,drop=FALSE]
-                    potential_issues<-c(potential_issues,i@issues)
-                }
+            {
+                ## clean dataframe column names
+                i@results<-column_conversion(i@results)
+                ## update the bibliography (Adding the required sources
+                
+                bibliography[[i@bibliography]]=names(i@results)
+                tr8_traits=merge(tr8_traits,i@results,by.x=0,by.y=0,all=TRUE)
+                row.names(tr8_traits)<-tr8_traits$Row.names
+                tr8_traits<-tr8_traits[,-1,drop=FALSE]
+                potential_issues<-c(potential_issues,i@issues)
+            }
         }
 
         ## remove column species_list
         row_names<-row.names(tr8_traits)
         ## names_columns<-names(tr8_traits)[!(names(tr8_traits)%in%c("Row.names","species_list"))]
-        ## tr8_traits<-as.data.frame(tr8_traits[,names_columns],row.names = row_names)
         ## names(tr8_traits)<-names_columns
+        ## tr8_traits<-as.data.frame(tr8_traits[,names_columns],row.names = row_names)
         tr8_traits<-tr8_traits[,!(names(tr8_traits)%in%c("Row.names","species_list")),drop=FALSE]
-        
+
         obj<-new("Tr8")
         ##    obj@double_names<-unique(c(eco_traits@double_names,leda_traits@double_names))
         ##    obj@not_valid<-intersect(intersect(eco_traits@not_valid,leda_traits@not_valid),pignatti_traits@not_valid)
@@ -423,6 +484,23 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE){
         ## biolflor_clean is not needed any more
         ## tr8_traits<-biolflor_clean(tr8_traits)
         tr8_traits<-column_conversion(tr8_traits)
+
+        
+        if(synonyms==TRUE){
+            
+            reference_names<-ldply(lapply(reference_names,ldply))
+            names(reference_names)<-c("original_names","synonyms")
+            tr8_traits<-merge(reference_names,tr8_traits,by.x="synonyms",by.y=0)
+            ## in this case, where synonyms are required, then
+            ## row names is left with "numbers" since many strange coincidences may
+            ## happen (eg. two different species may have been found under the
+            ## same synonym, eg. using them as row.names would rais an error (and orginal
+            ## names cannot be used for the very same reason)
+            ##row.names(tr8_traits)<-tr8_traits$synonyms
+            ##tr8_traits<-tr8_traits[,names(tr8_traits)!="synonyms"]
+        }
+
+
         obj@reference<-temp_dframe
         obj@results<-tr8_traits
         obj@bibliography<-bibliography

@@ -3,7 +3,7 @@
 \title{\code{tr8}: retrieving functional traits data from various
 databases.}
 \usage{
-tr8(species_list, download_list = NULL, gui_config = FALSE)
+tr8(species_list, download_list = NULL, gui_config = FALSE,synonyms=FALSE)
 }
 \arguments{
   \item{species_list}{a vector containing names of the
@@ -14,7 +14,15 @@ tr8(species_list, download_list = NULL, gui_config = FALSE)
   traits which should be downlaoaded (to be used as an alternative
 to the GUI inerface)}
   \item{gui_config}{if set to TRUE a GUI for selecting
-  traits of interest is shown (default is TRUE)}
+    traits of interest is shown (default is FALSE)}
+  \item{synonyms}{if set to TRUE tr8 will use \code{taxize} to find
+  synonyms for the species names provided with the \code{species_list} parameter and
+  will return trait values for all those species; in that case the
+  dataframe contained in the \code{@results} slot will have two
+  additional columns called \emph{synonyms} (which contains the synonyms
+  found using \code{tnrs}) and another one
+  called \emph{original_names} which includes the
+  original names provided with \code{species_list} (default is FALSE)}
 }
 \value{
 An object of class \code{Tr8}; the slots \code{@results} contains various traits data for the species
@@ -30,20 +38,23 @@ At the moment the following databeses are available:
 
 \itemize{
 
-  \item{Biolflor \url{http://www2.ufz.de/biolflor/index.jsp}}
+  \item{Biolflor \samp{http://www2.ufz.de/biolflor/index.jsp}}
 
- \item{ Ecological Flora of the British Isles \url{http://www.ecoflora.co.uk/} }
+ \item{ Ecological Flora of the British Isles \samp{http://www.ecoflora.co.uk/} }
 
-  \item{ LEDA traitbase \url{http://www.leda-traitbase.org/LEDAportal/}}
+  \item{ LEDA traitbase \samp{http://www.leda-traitbase.org/LEDAportal/}}
 
   \item{ Ellenberg values for Italian Flora}
 
-  \item{ Mycorrhizal intensity database \url{http://esapubs.org/Archive/ecol/E093/059/default.htm}}
+  \item{ Mycorrhizal intensity database \samp{http://esapubs.org/Archive/ecol/E093/059/default.htm}}
 
-  \item{ MycoFlor \url{http://www.esajournals.org/doi/abs/10.1890/12-1700.1}}
+  \item{ MycoFlor \samp{http://www.esajournals.org/doi/abs/10.1890/12-1700.1}}
 
-  \item{ Catminat \url{http://philippe.julve.pagesperso-orange.fr/catminat.htm}}
+  \item{ Catminat \samp{http://philippe.julve.pagesperso-orange.fr/catminat.htm}}
 
+  \item{ BROT \samp{http://www.uv.es/jgpausas/brot.htm} }
+
+  \item{PLANTS \samp{http://www.bricol.net/}}
 }
 
 
@@ -60,8 +71,10 @@ At the moment the following databeses are available:
 
 }
 \examples{
+\dontrun{
 ## download some trait data for Abies alba 
 My_traits<-tr8(species_list=c("Abies alba"),download_list=c("life_form_P"))
+}
 }
 \author{
 Gionata Bocci <boccigionata@gmail.com>
@@ -81,7 +94,7 @@ Bundesamt für Naturschutz)
 
 Fitter, A . H. and Peat , H. J. (1994). The Ecological Flora
 Database, J. Ecol., 82, 415-425.
-\url{http://www.ecoflora.co.uk}
+\samp{http://www.ecoflora.co.uk}
 
 \bold{LEDA traitbase} Kleyer, M., Bekker, R.M., Knevel,
 I.C., Bakker, J.P, Thompson, K., Sonnenschein, M.,
@@ -102,7 +115,7 @@ Akhmetzhanova, A.A, Soudzilovskaia, N.A., Onipchenko, V.G.,
 Cornwell, W. K., Agafonov, V. A., Selivanov, I.A., and Cornelissen, 
 J. H. C. (2012): A rediscovered treasure: mycorrhizal intensity database for
 3000 vascular plants species across the former Soviet
-Union. Ecology 93:689. \url{http://esapubs.org/Archive/ecol/E093/059/default.htm}
+Union. Ecology 93:689. \samp{http://esapubs.org/Archive/ecol/E093/059/default.htm}
 
 \bold{Pignatti et al., 2005}
 
@@ -124,6 +137,22 @@ Julve, P., 1998 ff. - Baseflor. Index botanique, écologique et
 chorologique de la flore de France. Version : 26 November 2014.
 http://perso.wanadoo.fr/philippe.julve/catminat.htm
 
+\bold{BROT}
+
+Paula S, Arianoutsou M, Kazanis D, Tavsanoglu Ç, Lloret F, Buhk C, Ojeda
+F, Luna B, Moreno JM, Rodrigo A, Espelta JM, Palacio S, Fernández-Santos
+B, Fernandes PM, and Pausas JG. 2009.
+Fire-related traits for plant species of the Mediterranean Basin. Ecology 90: 1420. 
+
+AND
+
+Paula S. & Pausas J.G. 2013. BROT: a plant trait database for
+Mediterranean Basin species.
+Version 2013.06. URL: http://www.uv.es/jgpausas/brot.htm
+
+\bold{PLANTS}
+
+Green, W. (2009) USDA PLANTS Compilation, version 1, 09-02-02. 
 
 } 
 

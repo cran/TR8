@@ -1,8 +1,8 @@
 Package: TR8
 Type: Package
 Title: A Tool for Downloading Functional Traits Data for Plant Species
-Version: 0.9.13
-Date: 2014-02-27
+Version: 0.9.14
+Date: 2016-3-30
 Author: Gionata Bocci <boccigionata@gmail.com>
 Maintainer: Gionata Bocci <boccigionata@gmail.com>
 Description: Plant ecologists often need to collect "traits" data 
@@ -11,7 +11,8 @@ Description: Plant ecologists often need to collect "traits" data
 	     automatically retrieving some of those functional traits data
 	     for plant species from publicly available databases (Biolflor, 
 	     The Ecological Flora of the British Isles, LEDA traitbase, Ellenberg 
-	     values for Italian Flora, Mycorrhizal intensity databases, Catminat).
+	     values for Italian Flora, Mycorrhizal intensity databases, Catminat, BROT,
+	     PLANTS, Jepson Flora Project).
 	     The TR8 name, inspired by "car plates" jokes, was chosen since
 	     it both reminds of the main object of the package and is
 	     extremely short to type.
@@ -21,9 +22,9 @@ Encoding: UTF-8
 URL: https://github.com/GioBo/TR8
 BugReports: https://github.com/GioBo/TR8/issues
 Depends: R (>= 2.10), methods
-Imports: RCurl, XML, taxize, plyr, rappdirs, gWidgets, gWidgetstcltk,
-        gdata
+Imports: RCurl, XML, plyr, reshape, rappdirs, gWidgets, gWidgetstcltk,
+        readxl, taxize
 NeedsCompilation: no
-Packaged: 2015-03-21 23:33:10 UTC; gionata
+Packaged: 2016-03-30 21:28:25 UTC; gionata
 Repository: CRAN
-Date/Publication: 2015-03-22 08:03:23
+Date/Publication: 2016-03-31 17:38:40

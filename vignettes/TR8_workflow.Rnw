@@ -40,10 +40,10 @@
    interested in using the \texttt{TR8} package: this is meant to be a
    step-by-step guide involving most of the common problems that are
    faced in importing data, checking them and running \texttt{tr8}\footnote{The process described here is rather lengthy in order to 
-   describe each single step in detail; users which are confident in the use of R could make most of the steps much shorter than what's presented here.}.
+   describe each single step in detail; users who are confident in the use of R could make most of the steps much shorter than what's presented here.}.
     This section relies on the dataset used by Sandau et
     al.(2014)\cite{Sandau} which is publicly available at
-    \texttt{dryad}\cite{dryad_Sandau} (under a CC0 1.0 licence ).
+    \texttt{dryad}\cite{dryad_Sandau} (under a CC0 1.0 licence).
     \textbf{NOTA BENE}: this dataset is here merely used as
     a tool to demonstrate some important points related to the functioning of
     \texttt{TR8}, thus what is proposed in this tutorial
@@ -66,15 +66,14 @@
    dataset and load it into an \texttt{R} session or you could save
    a \texttt{.csv} version of the file and then load it into
    \texttt{R} using \texttt{read.csv()}; if you are following these strategies, feel free to skip this paragraph); for this tutorial we will use
-   \texttt{XLConnect} to download and load the dataset.
+   \texttt{readxl}\cite{readxl} to download and load the dataset.
 
 @ 
 <<dryad,eval=FALSE>>=
-## the XLConnect package is needed
-## install.packages("XLConnect",dependencies = T)
-library(XLConnect)
+## the readxl package is needed
+## library(readxl)
 ## store the  url of the dryad package
-url<-"http://datadryad.org/bitstream/handle//
+url<-"http://datadryad.org/bitstream/handle/
     10255/dryad.65646/MEE-13-11-651R2_data.xlsx?sequence=1"
 ## choose the extension for the temp file where 
 ## data will be stored
@@ -83,15 +82,23 @@ tmp = tempfile(fileext = ".xlsx")
 download.file(url = url, destfile = tmp)
 
 ## we first read the "metadata" sheet from the xlsx file
-metadata<-readWorksheetFromFile(file = tmp, sheet = "metadata", 
- header = FALSE, startRow = 15, startCol = 1, endCol = 3)
+## (the row containing the species names start from 
+## row 13
+metadata<-read_excel(path=tmp,sheet="metadata",skip=12,col_names=F)
+## lets rename the column of this dataset 
+names(metadata)<-c("Col1","Col2")
+
 ## then read the vegetation data
-veg_data <-readWorksheetFromFile(file = tmp, sheet = "data.txt", 
-       header = TRUE, startRow = 1, startCol = 11, endCol = 123)
-## round veg_data numbers to the second digit
+veg_data <-readWorksheetFromFile(file = tmp, sheet = "data.txt")
+## only the columns from 11 to 123 contains the species data
+veg_data<-veg_data[,11:123]
+       ## round veg_data numbers to the second digit
 veg_data<-round(veg_data,digits = 2)
-env_data<-readWorksheetFromFile(file = tmp, sheet = "data.txt",
-         header = TRUE, startRow = 1, startCol = 3, endCol = 4)
+## read the dataset with the environmental variables
+env_data<-read_excel(path = tmp, sheet = "data.txt")
+## and select only the column from 1 to 4 which contain
+## the data of interest
+env_data<-env_data[,1:4]
 @ %def 
 
   We now have the following dataframes:
@@ -181,7 +188,7 @@ Polygonum mite (=Persicaria laxiflora)   0.9     Persicaria mitis       (Schrank
 
   The last point is not strictly relevant for using the \texttt{tr8} function
   since \uline{authors' names should not be included in the list of species
-  names passed to the function} (but we correct the authors names anyway so that when we re-run \texttt{tnrs} function, no mistakes are found for these entries) . 
+  names passed to the function} (but we correct the authors names anyway so that when we re-run \texttt{tnrs} function, no mistakes are found for these entries). 
 
   We adopt the following fixes for the issues we've found:
 \small
@@ -622,7 +629,7 @@ par(mfrow=c(1,1))
 
 
    From the graphs we are able to say that \textit{group 1} is composed of only   "Hemicryptophyte" species, while \textit{group 2 } has a more homogeneous combination of "Geophytes", "Hemicryptophytes" and  "Hemicryptophyte - Therophyte" species. If we look at \texttt{maximum height}, there's a group which is clearly different from all the rest: this is the one which is composed of only \textit{Salix alba}: this is the only woody species in our analyzed dataset, thus it's clear that, when considering the \texttt{maximum height} trait, it would be separated from all the other species. 
-   In terms of \texttt{leaf area}, \texttt{group 4} is composed of some of the broadleaf species which have the maximum values for his trait (e.g. \textit{Verbascum thapsus} and \textit{V. lychnitis}.
+   In terms of \texttt{leaf area}, \texttt{group 4} is composed of some of the broadleaf species which have the maximum values for his trait (e.g. \textit{Verbascum thapsus} and \textit{V. lychnitis}).
   \end{enumerate}
    
 \section{Some concluding remarks}
@@ -633,7 +640,7 @@ par(mfrow=c(1,1))
    \begin{itemize}
    \item We did not transform original data: it would have made sense to transform the original abundance data, e.g. using standardization algorithm provided by the \texttt{decostand()} function in \texttt{vegan}.
    \item In the end we excluded many species from our analysis since we had not found trait data for them; we could have searched for data in different databases (e.g. \texttt{life\_form} is also available in \texttt{Ecolfora}) or we could have got data from other sources - like books, floras, etc... - and added those values to the downloaded traits).
-   \item We used trait values retrieved from databases\footnote{This is what \texttt{TR8} was created for...} and assumed that those were correct for our analysis; this poses some problems, e.g the case of \textit{S. alba} is striking in this respect: looking at the abundance data, it's clear that what were sampled were small individuals, but using data retrieved by \texttt{tr8} we used a value of 25 m for it \texttt{maximum height} value.
+   \item We used trait values retrieved from databases\footnote{This is what \texttt{TR8} was created for...} and assumed that those were correct for our analysis; this poses some problems, e.g the case of \textit{S. alba} is striking in this respect: looking at the abundance data, it's clear that what were sampled were small individuals, but using data retrieved by \texttt{tr8} we used a value of 25 m for its \texttt{maximum height} value.
    \item \texttt{Leaf area} values could have been coded as ordered factors, instead of using midpoint values of each class (which is probably one of the reason for the shape of the boxes in the boxplot in figure at page \pageref{fig:results}).
      
    \end{itemize}

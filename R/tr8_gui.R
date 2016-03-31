@@ -36,6 +36,19 @@ tr8_config<-function(){
     temp_AMF<-temp_dframe[temp_dframe$db=="AMF",c("long_code","description")]
     ## get traits from catminat
     temp_Catminat<-temp_dframe[temp_dframe$db=="Catminat",c("long_code","description")]
+    ## get traits from BROT
+    temp_BROT<-temp_dframe[temp_dframe$db=="BROT",c("long_code","description")]
+    ## get traits from Electronic flora of California
+    temp_efloracal<-temp_dframe[temp_dframe$db=="EFlora_Cal",c("long_code","description")]
+    ## get traits from PLANTS:
+    ## traits from PLANTS are split into 2 panels because
+    ## they do not all fit in a single one
+    temp_PLANTS<-temp_dframe[temp_dframe$db=="PLANTS",c("long_code","description")]
+    split_df<-ceiling(nrow(temp_PLANTS)/2)
+    temp_PLANTS_A<-temp_PLANTS[1:split_df,]
+    temp_PLANTS_B<-temp_PLANTS[(split_df+1):nrow(temp_PLANTS),]
+    
+    
     
     ## create the main MODAL window
     window<-gbasicdialog(title="Traits selector for TR8")
@@ -52,8 +65,16 @@ tr8_config<-function(){
     res_Pignatti<-gcheckboxgroup(temp_Pignatti$description,container=nb,label="Pignatti")
     res_AMF<-gcheckboxgroup(temp_AMF$description,container=nb,label="AMF")
     res_Catminat<-gcheckboxgroup(temp_Catminat$description,container=nb,label="Catminat")
+    res_BROT<-gcheckboxgroup(temp_BROT$description,container=nb,label="BROT")
+    res_efloracal<-gcheckboxgroup(temp_efloracal$description,container=nb,label="Eflora Calif.")
+    ##res_PLANTS<-gcheckboxgroup(temp_PLANTS$description,container=nb,label="PLANTS")
+    ## two panels for PLANTS traits
+    res_PLANTS_A<-gcheckboxgroup(temp_PLANTS_A$description,container=nb,label="PLANTS (1)")
+    res_PLANTS_B<-gcheckboxgroup(temp_PLANTS_B$description,container=nb,label="PLANTS (2)")
+    
     visible(window,TRUE)
 
+    
     
     res_BiolFlor<-svalue(res_BiolFlor)
     res_LEDA<-svalue(res_LEDA)
@@ -61,7 +82,9 @@ tr8_config<-function(){
     res_Pignatti<-svalue(res_Pignatti)
     res_AMF<-svalue(res_AMF)
     res_Catminat<-svalue(res_Catminat)
-
+    res_BROT <- svalue(res_BROT)
+    res_PLANTS <- c(svalue(res_PLANTS_A),svalue(res_PLANTS_B))
+    res_efloracal<-c(svalue(res_efloracal))
     
     res_BiolFlor<-fix_values(res_BiolFlor,temp_BiolFlor)
     res_LEDA<-fix_values(res_LEDA,temp_LEDA)
@@ -69,8 +92,13 @@ tr8_config<-function(){
     res_Pignatti<-fix_values(res_Pignatti,temp_Pignatti)
     res_AMF<-fix_values(res_AMF,temp_AMF)
     res_Catminat<-fix_values(res_Catminat,temp_Catminat)
+    res_BROT <- fix_values(res_BROT,temp_BROT)
+    ## get the chosen traits from the 2 PLANTS panel and merge them in a single vector
+    ##res_PLANTS<-c(res_PLANTS,temp_PLANTS)
+    res_PLANTS<- fix_values(res_PLANTS,temp_PLANTS)
+    res_efloracal<-fix_values(res_efloracal,temp_efloracal)
     
-    traits_list<-list("BiolFlor"=res_BiolFlor,"LEDA"=res_LEDA,"Ecoflora"=res_Ecoflora,"Pignatti"=res_Pignatti,"AMF"=res_AMF,"Catminat"=res_Catminat)
+    traits_list<-list("BiolFlor"=res_BiolFlor,"LEDA"=res_LEDA,"Ecoflora"=res_Ecoflora,"Pignatti"=res_Pignatti,"AMF"=res_AMF,"Catminat"=res_Catminat,"BROT"=res_BROT,"PLANTS"=res_PLANTS,"efloracal"=res_efloracal)
     return(traits_list)
 
 }
