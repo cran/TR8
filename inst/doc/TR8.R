@@ -173,12 +173,29 @@ head(available_tr8)
 ###################################################
 ## my_species<-c("Salix alba","Inula viscosa")
 ## my_traits<-c("h_max","le_area","li_form")
-## my_Data<-tr8(species_list = my_species, download_list = my_traits, synonyms=TRUE)
+## my_Data<-tr8(species_list = my_species, download_list = my_traits, 
+##              synonyms=TRUE)
 
 
 ###################################################
-### code chunk number 23: vignette (eval = FALSE)
+### code chunk number 23: catminat (eval = FALSE)
+###################################################
+## my_species<-c("Myrtus communis")
+## ## some traits from Catminat
+## my_traits<-c("inflorescence_fr","sex_reprod_fr","poll_vect_fr")
+## my_Data<-tr8(species_list = my_species, download_list = my_traits,
+##              catminat_alternatives=TRUE)
+
+
+###################################################
+### code chunk number 24: vignette (eval = FALSE)
 ###################################################
 ## vignette("TR8_workflow")
+
+
+###################################################
+### code chunk number 25: tr8_setup (eval = FALSE)
+###################################################
+## tr8_setup()
 
 
