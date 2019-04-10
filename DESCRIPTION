@@ -1,8 +1,8 @@
 Package: TR8
 Type: Package
 Title: A Tool for Downloading Functional Traits Data for Plant Species
-Version: 0.9.19
-Date: 2018-12-1
+Version: 0.9.20
+Date: 2019-04-09
 Author: Gionata Bocci <boccigionata@gmail.com>
 Maintainer: Gionata Bocci <boccigionata@gmail.com>
 Description: Plant ecologists often need to collect "traits" data
@@ -26,6 +26,6 @@ Imports: RCurl, XML, plyr, reshape, rappdirs, gWidgets, gWidgetstcltk,
         readxl, taxize
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2018-12-01 14:10:34 UTC; gionata
+Packaged: 2019-04-09 22:13:20 UTC; gionata
 Repository: CRAN
-Date/Publication: 2018-12-01 14:40:03 UTC
+Date/Publication: 2019-04-10 08:25:25 UTC
