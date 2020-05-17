@@ -286,11 +286,11 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
                 data_db<-temp_dframe[temp_dframe$db==db,]
                 if(sum(data_db$short_code%in%download_list)>0){
                     code<-data_db$long_code[data_db$short_code%in%download_list]
+                    traits_list[db]<-list(code)
                 }else{code<-NULL}
-                traits_list[db]<-list(code)
             }
         }
-
+        
         if(length(species_list) > length(unique(species_list))){
             duplicates <- names(which(table(species_list)>1))
             message("\nDouble entries were found for the following species: \n")
@@ -448,7 +448,7 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
         brot_traits <- brot_data(species_list,TRAITS=traits_list$BROT)
         
         ## download traits from Electronic Flora of Californa
-        efloracal_traits<-eflora(species_list,TRAITS=traits_list$EFlora_Cal)
+        efloracal_traits<-eflora(species_list,TRAITS=traits_list$efloracal)
         
         ## check if an already downloaded version of the PLANTS database
         ## exists and, if so, use it otherwise download a copy, but only
