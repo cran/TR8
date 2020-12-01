@@ -46,7 +46,8 @@ options(width = 60)
 ## ## a vector of traits
 ## to_be_downloaded<-c("reprod_B","strategy")
 ## ## now run tr8 and store the results in the my_traits object
-## my_traits<-tr8(species_list = my_species,download_list = to_be_downloaded)
+## my_traits<-tr8(species_list = my_species,download_list = to_be_downloaded,
+##                allow_persistent=TRUE)
 
 
 ###################################################
@@ -67,7 +68,8 @@ head(available_tr8)
 ###################################################
 ## my_species<-c("Salix alba","Populus nigra")
 ## my_traits<-c("h_max","le_area","li_form")
-## my_Data<-tr8(species_list = my_species, download_list = my_traits)
+## my_Data<-tr8(species_list = my_species, download_list = my_traits,
+##              allow_persistent=TRUE)
 
 
 ###################################################
@@ -101,7 +103,8 @@ head(available_tr8)
 ###################################################
 ## my_species<-c("Salix alba","Populus nigra")
 ## my_traits<-c("h_max","le_area","li_form")
-## my_Data<-tr8(species_list = my_species, download_list = my_traits)
+## my_Data<-tr8(species_list = my_species, download_list = my_traits,
+##              allow_persistent=TRUE)
 ## issues(my_Data)
 
 
@@ -115,7 +118,7 @@ head(available_tr8)
 ## specie_names<-names(veg_data)
 ## ## use the tr8() function
 ## ## and tick those traits of interest in the pop-up window
-## my_traits<-tr8(species_names,gui_config=TRUE)
+## my_traits<-tr8(species_names,gui_config=TRUE, allow_persistent=TRUE)
 ## ## print the results
 ## print(my_traits)
 
@@ -144,14 +147,14 @@ head(available_tr8)
 ###################################################
 ### code chunk number 18: tr8_ex1 (eval = FALSE)
 ###################################################
-## my_traits<-tr8(species_names,gui_config = TRUE)
+## my_traits<-tr8(species_names,gui_config = TRUE, allow_persistent=TRUE)
 ## print(my_traits)
 
 
 ###################################################
 ### code chunk number 19: issue_workflow (eval = FALSE)
 ###################################################
-## my_traits<-tr8(species_names,gui_config = TRUE)
+## my_traits<-tr8(species_names,gui_config = TRUE, allow_persistent=TRUE)
 ## issues(my_traits)
 
 
@@ -168,32 +171,13 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 22: synonims (eval = FALSE)
-###################################################
-## my_species<-c("Salix alba","Inula viscosa")
-## my_traits<-c("h_max","le_area","li_form")
-## my_Data<-tr8(species_list = my_species, download_list = my_traits, 
-##              synonyms=TRUE)
-
-
-###################################################
-### code chunk number 23: catminat (eval = FALSE)
-###################################################
-## my_species<-c("Myrtus communis")
-## ## some traits from Catminat
-## my_traits<-c("inflorescence_fr","sex_reprod_fr","poll_vect_fr")
-## my_Data<-tr8(species_list = my_species, download_list = my_traits,
-##              catminat_alternatives=TRUE)
-
-
-###################################################
-### code chunk number 24: vignette (eval = FALSE)
+### code chunk number 22: vignette (eval = FALSE)
 ###################################################
 ## vignette("TR8_workflow")
 
 
 ###################################################
-### code chunk number 25: tr8_setup (eval = FALSE)
+### code chunk number 23: tr8_setup (eval = FALSE)
 ###################################################
 ## tr8_setup()
 

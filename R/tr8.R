@@ -239,7 +239,7 @@ setMethod(f="bib",
 #' #My_traits<-tr8(species_list=c("Abies alba"),download_traits=c("le_area","h_max","h_min"))
 #' }
 #' @export tr8
-tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,catminat_alternatives=FALSE){
+tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,catminat_alternatives=FALSE, allow_persistent=NULL){
 
     ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
     ##     stop("You need a working internet connection to use tr8()")
@@ -265,7 +265,40 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
     ## appname <- "TR8"
     ## appauthor <- "GioBo"
     ## directory<-user_data_dir(appname, appauthor)
-    directory<-user_data_dir()
+  
+    if(is.null(allow_persistent)){
+ 
+      risp <- ""
+      cat("\nStoring downloaded data in persistent files will\n")
+      cat("allow faster future queries.\n\n")
+      risp <- readline("Do you allow tr8 to store data in a persistent file(s)?\n (answer y/n; Enter to abort): \n")
+      cat("\n\n To avoid this message, set the 'allow_persistent' parameter to\n")
+      cat("either FALSE (tr8 will use temporary files that will be deleted at\n")
+      cat("the end of the session) or TRUE, e.g.:\n")
+      cat("\n 'tr8(species_list=\"Salix alba\", download_list=c(\"h_max\"), allow_persistent=TRUE)'\n\n")
+        
+      
+      if(!risp%in%c("n","y")){
+        cat("Please rerun tr8 and select one between y or n or,\n")
+        return()
+      }
+
+                                        #
+      if(risp=="n" ){
+        ## use tempdir
+        directory <- tempdir()
+        allow_persistent <- FALSE
+      }
+      if(risp=="y"){
+        directory<-user_data_dir()
+        allow_persistent <- TRUE}
+    }
+    if(allow_persistent){
+      directory<-user_data_dir()}else if(!allow_persistent){
+                                  directory <- tempdir() }    
+
+
+  
     
 
     
@@ -302,33 +335,36 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
         
         if(synonyms==TRUE){
             
-            check_names<-tnrs(species_list,verbose=FALSE)
-            check_names<-check_names[,c("submittedname","acceptedname","matchedname")]
+            ## check_names<-tnrs(species_list,verbose=FALSE)
+            ## check_names<-check_names[,c("submittedname","acceptedname","matchedname")]
             
-            reference_names<-lapply(species_list,function(x){
+            ## reference_names<-lapply(species_list,function(x){
                 
-                sp_names<-check_names[check_names$submittedname==x,]
-                sp_names<-unique(unlist(sp_names))
-                sp_names<-sp_names[grep("^\\w+ \\w+.*$",sp_names)]
-                return(sp_names)
+            ##     sp_names<-check_names[check_names$submittedname==x,]
+            ##     sp_names<-unique(unlist(sp_names))
+            ##     sp_names<-sp_names[grep("^\\w+ \\w+.*$",sp_names)]
+            ##     return(sp_names)
 
-            }
-            )
-            names(reference_names)<-species_list
-            species_list<-unique(as.vector(unlist(reference_names)))
-            
+            ## }
+            ## )
+            ## names(reference_names)<-species_list
+            ## species_list<-unique(as.vector(unlist(reference_names)))
+
+            warning("The synonyms option is deprecated in current version of TR8")
+
         }
         
         
         ## retrieve traits from ecolora function
         local_ecoflora<-file.path(directory,"ECOFLORA_df.Rda")
         if(file.exists(local_ecoflora)){
-            load(local_ecoflora)}else{
-            if(length(traits_list$Ecoflora)>0){
-                local_storage(db="Ecoflora",directory)
-                load(local_ecoflora)
-            }
-        }
+          load(local_ecoflora)}else{
+                                  if(length(traits_list$Ecoflora)>0){
+                                    
+                                    local_storage(db="Ecoflora",directory)
+                                    load(local_ecoflora)
+                                  }
+                                }
         eco_traits<-ecoflora(species_list,TRAITS=traits_list$Ecoflora,rest=rest)
         
         ## check if an already downloaded version of the LEDA database
@@ -336,9 +372,9 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
         ## if at least one LEDA trait is needed
         local_leda<-file.path(directory,"leda_database.Rda")
         if(file.exists(local_leda)){
-            load(local_leda)}else{
+            rearranged<-get(load(local_leda))}else{
             if(length(traits_list$LEDA)>0){
-
+              
                 ## unfortunately nls() does not work on Windows, thus I think it's better to remove that
                 ## if(tryCatch(nsl("www.cran.r-project.org"), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
                 ##     stop("You neither have a working internet connection nor locally stored LEDA files.\n  Please re-run tr8() function when your internet connection is working.")
@@ -349,9 +385,9 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
                 if(tryCatch(url.exists(url_leda), error =function(e){return(FALSE)},warning=function(w){return(FALSE)})==FALSE){
                     stop("\n\n LEDA website is probably down.\n Please re-run tr8() without selecting LEDA as a source of data \n (or re-try later).\n\n")
                 }
-                
+              
                 local_storage(db="LEDA",directory)
-                load(local_leda)
+                rearranged<-get(load(local_leda))
             }else{rearranged<-NULL}
         }
         leda_traits<-leda(species_list,TRAITS=traits_list$LEDA,rearranged=rearranged)
@@ -503,9 +539,13 @@ tr8<-function(species_list,download_list=NULL,gui_config=FALSE,synonyms=FALSE,ca
         
         if(synonyms==TRUE){
             
-            reference_names<-ldply(lapply(reference_names,ldply))
-            names(reference_names)<-c("original_names","synonyms")
-            tr8_traits<-merge(reference_names,tr8_traits,by.x="synonyms",by.y=0,all=T)
+            ## reference_names<-ldply(lapply(reference_names,ldply))
+            ## names(reference_names)<-c("original_names","synonyms")
+            ## tr8_traits<-merge(reference_names,tr8_traits,by.x="synonyms",by.y=0,all=T)
+            cat("\nPlease note: the synonyms option is deprecated in current version of TR8\n\n")
+            ## warning("The synonyms option deprecated in current version of TR8")
+
+
             ## in this case, where synonyms are required, then
             ## row names is left with "numbers" since many strange coincidences may
             ## happen (eg. two different species may have been found under the
