@@ -44,7 +44,7 @@ options(width = 60)
 ## ## a vector containing a list of plant species names
 ## my_species<-c("Apium graveolens","Holcus mollis","Lathyrus sylvestris")
 ## ## a vector of traits
-## to_be_downloaded<-c("reprod_B","strategy")
+## to_be_downloaded<-c("life_form_P","ell_L_it")
 ## ## now run tr8 and store the results in the my_traits object
 ## my_traits<-tr8(species_list = my_species,download_list = to_be_downloaded,
 ##                allow_persistent=TRUE)
@@ -130,14 +130,7 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 16: import (eval = FALSE)
-###################################################
-## My_data<-read.csv("my_veg_data.csv",
-##                   header=T,row.names=1,check.names=F)
-
-
-###################################################
-### code chunk number 17: one (eval = FALSE)
+### code chunk number 16: one (eval = FALSE)
 ###################################################
 ## species_names<-names(veg_data)
 ## checked_names<-tnrs(species_names,source="iPlant_TNRS")
@@ -145,39 +138,39 @@ head(available_tr8)
 
 
 ###################################################
-### code chunk number 18: tr8_ex1 (eval = FALSE)
+### code chunk number 17: tr8_ex1 (eval = FALSE)
 ###################################################
 ## my_traits<-tr8(species_names,gui_config = TRUE, allow_persistent=TRUE)
 ## print(my_traits)
 
 
 ###################################################
-### code chunk number 19: issue_workflow (eval = FALSE)
+### code chunk number 18: issue_workflow (eval = FALSE)
 ###################################################
 ## my_traits<-tr8(species_names,gui_config = TRUE, allow_persistent=TRUE)
 ## issues(my_traits)
 
 
 ###################################################
-### code chunk number 20: extract (eval = FALSE)
+### code chunk number 19: extract (eval = FALSE)
 ###################################################
 ## traits_df<-extract_traits(my_traits)
 
 
 ###################################################
-### code chunk number 21: store_to_csv (eval = FALSE)
+### code chunk number 20: store_to_csv (eval = FALSE)
 ###################################################
 ## save(traits_df,file="traits_df.csv")
 
 
 ###################################################
-### code chunk number 22: vignette (eval = FALSE)
+### code chunk number 21: vignette (eval = FALSE)
 ###################################################
 ## vignette("TR8_workflow")
 
 
 ###################################################
-### code chunk number 23: tr8_setup (eval = FALSE)
+### code chunk number 22: tr8_setup (eval = FALSE)
 ###################################################
 ## tr8_setup()
 

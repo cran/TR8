@@ -6,19 +6,18 @@
 ## ## the readxl package is needed
 ## ## library(readxl)
 ## ## store the  url of the dryad package
-## url<-"http://datadryad.org/bitstream/handle/
-##     10255/dryad.65646/MEE-13-11-651R2_data.xlsx?sequence=1"
-## ## choose the extension for the temp file where 
+## url<-"http://datadryad.org/bitstream/handle/10255/dryad.65646/MEE-13-11-651R2_data.xlsx?sequence=1"
+## ## choose the extension for the temp file where
 ## ## data will be stored
 ## tmp = tempfile(fileext = ".xlsx")
 ## ## download the data
 ## download.file(url = url, destfile = tmp)
 ## 
 ## ## we first read the "metadata" sheet from the xlsx file
-## ## (the row containing the species names start from 
+## ## (the row containing the species names start from
 ## ## row 13
 ## metadata<-read_excel(path=tmp,sheet="metadata",skip=12,col_names=F)
-## ## lets rename the column of this dataset 
+## ## lets rename the column of this dataset
 ## names(metadata)<-c("Col1","Col2")
 ## 
 ## ## then read the vegetation data
@@ -60,12 +59,12 @@
 ## library(plyr)
 ## ## we use the revalue function in the plyr package
 ## ## to fix all the above mentioned issues
-## metadata$Col2<-revalue(metadata$Col2, 
+## metadata$Col2<-revalue(metadata$Col2,
 ##      c("Taraxacum officinale!!!!!"="Taraxacum officinale F.H. Wigg."))
 ## metadata$Col2<-revalue(metadata$Col2,
 ##      c("Polygonum mite (=Persicaria laxiflora)"="Persicaria mitis (Schrank) Assenov"))
 ## metadata$Col2<-revalue(metadata$Col2,
-##      c("Fallopia convolvulus (L.) A. Löwe"="Fallopia convolvulus (L.) Á. Löve"))
+##      c("Fallopia convolvulus (L.) A. L<U+00F6>we"="Fallopia convolvulus (L.) <U+00C1>. L<U+00F6>ve"))
 ## metadata$Col2<-revalue(metadata$Col2,
 ##      c("Setaria pumila (Poir.) Schult."="Setaria pumila (Poir.) Roem. & Schult."))
 ## metadata$Col2<-revalue(metadata$Col2,
@@ -91,7 +90,7 @@
 ### code chunk number 8: three (eval = FALSE)
 ###################################################
 ## final_dataframe<-final_dataframe[
-##         !final_dataframe$Col2%in%issues$submittedname,]  
+##         !final_dataframe$Col2%in%issues$submittedname,]
 
 
 ###################################################
@@ -237,13 +236,13 @@
 
 
 ###################################################
-### code chunk number 26: i (eval = FALSE)
+### code chunk number 26: i2 (eval = FALSE)
 ###################################################
 ## env.hill<-dudi.hillsmith(env_data,row.w=coa$lw,scannf = FALSE)
 
 
 ###################################################
-### code chunk number 27: l (eval = FALSE)
+### code chunk number 27: l2 (eval = FALSE)
 ###################################################
 ## rlq_tr8<-rlq(env.hill,coa,traits.hill,scannf = F)
 
@@ -255,7 +254,7 @@
 
 
 ###################################################
-### code chunk number 29: m (eval = FALSE)
+### code chunk number 29: n (eval = FALSE)
 ###################################################
 ## clust<-hclust(dist(rlq_tr8$lQ),method="ward.D2")
 ## plot(clust,sub="Ward minimum variance clustering",xlab="TR8 tutorial")
